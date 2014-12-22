@@ -1,0 +1,17 @@
+{
+	"name": "s9e/bencode",
+	"version": "0.9.0",
+	"type": "library",
+	"description": "Bencode decoder/encoder",
+	"homepage": "https://github.com/s9e/Bencode/",
+	"keywords": ["bencode","bittorrent","torrent"],
+	"license": "MIT",
+	"require": {
+		"php": ">=5.4"
+	},
+	"autoload": {
+		"psr-4": {
+			"s9e\\Bencode\\": "src"
+		}
+	}
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         bootstrap="src/Bencode.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         verbose="true"
+>
+	<testsuites>
+		<testsuite name="Bencode">
+			<file>tests/Test.php</file>
+		</testsuite>
+	</testsuites>
+
+</phpunit>
