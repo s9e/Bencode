@@ -109,11 +109,11 @@ class Test extends PHPUnit_Framework_TestCase
 			],
 			[
 				'd3:fool1:a1:b1:cee',
-				(object) ['foo' => ['a', 'b', 'c']]
+				json_decode('{"foo":["a","b","c"]}')
 			],
 			[
 				'd3:food3:bari1ee1:xd1:yi1eee',
-				(object) ['foo' => (object) ['bar' => 1], 'x' => (object) ['y' => 1]]
+				json_decode('{"foo":{"bar":1},"x":{"y":1}}')
 			],
 		];
 	}
