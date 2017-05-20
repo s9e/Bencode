@@ -2,6 +2,7 @@
 
 namespace s9e\Bencode\Tests;
 
+use ArrayObject;
 use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 use RuntimeException;
@@ -97,23 +98,26 @@ class Test extends PHPUnit_Framework_TestCase
 			],
 			[
 				'de',
-				new stdClass
+				new ArrayObject
 			],
 			[
 				'd3:fooi1ee',
-				(object) ['foo' => 1]
+				new ArrayObject(['foo' => 1])
 			],
 			[
 				'd3:bari2e3:fooi1ee',
-				(object) ['foo' => 1, 'bar' => 2]
+				new ArrayObject(['foo' => 1, 'bar' => 2])
 			],
 			[
 				'd3:fool1:a1:b1:cee',
-				json_decode('{"foo":["a","b","c"]}')
+				new ArrayObject(['foo' => ['a', 'b', 'c']])
 			],
 			[
 				'd3:food3:bari1ee1:xd1:yi1eee',
-				json_decode('{"foo":{"bar":1},"x":{"y":1}}')
+				new ArrayObject([
+					'foo' => new ArrayObject(['bar' => 1]),
+					'x'   => new ArrayObject(['y' => 1])
+				])
 			],
 		];
 	}

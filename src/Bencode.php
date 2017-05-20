@@ -7,6 +7,7 @@
 */
 namespace s9e\Bencode;
 
+use ArrayObject;
 use InvalidArgumentException;
 use RuntimeException;
 use stdClass;
@@ -17,10 +18,9 @@ class Bencode
 	* Decode a bencoded string
 	*
 	* @param  string $bencoded Bencoded string
-	* @param  bool   $useArray Whether to use arrays as dictionaries (otherwise, use objects)
 	* @return mixed            Decoded value
 	*/
-	public static function decode($bencoded, $useArray = false)
+	public static function decode($bencoded)
 	{
 		if (!is_string($bencoded) || $bencoded === '')
 		{
@@ -65,7 +65,8 @@ class Bencode
 			if ($c === 'd')
 			{
 				++$pos;
-				$value = ($useArray) ? [] : new stdClass;
+				$value = new ArrayObject;
+				$value->setFlags(ArrayObject::ARRAY_AS_PROPS);
 			}
 			elseif ($c === 'l')
 			{
@@ -125,15 +126,7 @@ class Bencode
 
 			if (isset($currentKey))
 			{
-				if ($useArray)
-				{
-					$current[$currentKey] = &$value;
-				}
-				else
-				{
-					$current->$currentKey = &$value;
-				}
-
+				$current->$currentKey = &$value;
 				$currentKey = null;
 			}
 			elseif ($currentType === 'd')
