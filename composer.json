@@ -1,6 +1,6 @@
 {
 	"name": "s9e/bencode",
-	"version": "1.0.0-dev",
+	"version": "1.0.0",
 	"type": "library",
 	"description": "Bencode decoder/encoder",
 	"homepage": "https://github.com/s9e/Bencode/",
