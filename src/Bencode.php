@@ -30,6 +30,9 @@ class Bencode
 		$pos = 0;
 		$max = strlen($bencoded) - 1;
 
+		// Pad the bencoded string with a NUL byte so we don't have to check for boundary
+		$bencoded .= "\0";
+
 		$current     = null;
 		$currentKey  = null;
 		$currentType = null;
@@ -94,7 +97,7 @@ class Bencode
 				$value = ($negative) ? -$value : +$value;
 
 				$pos += $spn;
-				if ($pos > $max || $bencoded[$pos] !== 'e')
+				if ($bencoded[$pos] !== 'e')
 				{
 					throw new RuntimeException('Invalid integer end found at offset ' . $pos);
 				}
