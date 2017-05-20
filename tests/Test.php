@@ -159,6 +159,18 @@ class Test extends PHPUnit_Framework_TestCase
 				'd1:xe',
 				new RuntimeException('Premature end of dictionary at offset 4')
 			],
+			[
+				'ie',
+				new RuntimeException('Invalid integer found at offset 1')
+			],
+			[
+				'i1x',
+				new RuntimeException('Invalid integer end found at offset 2')
+			],
+			[
+				'lxe',
+				new RuntimeException('Invalid character found at offset 1')
+			],
 		];
 	}
 }
