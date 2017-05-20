@@ -144,7 +144,7 @@ class Bencode
 			}
 			elseif (isset($current))
 			{
-				throw new RuntimeException('Unexpected value around offset ' . $pos);
+				throw new RuntimeException('Unexpected content ending at offset ' . $pos);
 			}
 			else
 			{

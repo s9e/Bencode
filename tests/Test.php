@@ -119,6 +119,10 @@ class Test extends PHPUnit_Framework_TestCase
 					'x'   => new ArrayObject(['y' => 1])
 				])
 			],
+			[
+				'3:abc',
+				'abc'
+			],
 		];
 	}
 
@@ -186,6 +190,14 @@ class Test extends PHPUnit_Framework_TestCase
 			[
 				'i123',
 				new RuntimeException('Invalid integer end found at offset 4')
+			],
+			[
+				'3 abc',
+				new RuntimeException('Invalid character found at offset 1')
+			],
+			[
+				'3:abc3:abc',
+				new RuntimeException('Unexpected content ending at offset 10')
 			],
 		];
 	}
