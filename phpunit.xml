@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <phpunit backupGlobals="false"
          backupStaticAttributes="false"
-         bootstrap="src/Bencode.php"
+         bootstrap="vendor/autoload.php"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
@@ -15,5 +15,9 @@
 			<file>tests/Test.php</file>
 		</testsuite>
 	</testsuites>
-
+	<filter>
+		<whitelist>
+			<directory suffix=".php">src</directory>
+		</whitelist>
+	</filter>
 </phpunit>
