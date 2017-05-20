@@ -94,7 +94,7 @@ class Bencode
 				$value = ($negative) ? -$value : +$value;
 
 				$pos += $spn;
-				if ($bencoded[$pos] !== 'e')
+				if ($pos > $max || $bencoded[$pos] !== 'e')
 				{
 					throw new RuntimeException('Invalid integer end found at offset ' . $pos);
 				}

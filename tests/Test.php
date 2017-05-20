@@ -179,6 +179,10 @@ class Test extends PHPUnit_Framework_TestCase
 				'i-1-e',
 				new RuntimeException('Invalid integer end found at offset 3')
 			],
+			[
+				'i123',
+				new RuntimeException('Invalid integer end found at offset 4')
+			],
 		];
 	}
 }
