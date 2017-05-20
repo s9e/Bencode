@@ -71,14 +71,27 @@ class Bencode
 			}
 			elseif ($c === 'i')
 			{
-				$spn = strspn($bencoded, '1234567890-', ++$pos);
+				if ($pos === $max)
+				{
+					throw new RuntimeException('Premature end of data');
+				}
+
+				$negative = false;
+				if ($bencoded[++$pos] === '-')
+				{
+					$negative = true;
+					++$pos;
+				}
+
+				$spn = strspn($bencoded, '1234567890', $pos);
 				if (!$spn)
 				{
 					throw new RuntimeException('Invalid integer found at offset ' . $pos);
 				}
 
 				// Capture the value and cast it as an integer/float
-				$value = +substr($bencoded, $pos, $spn);
+				$value = substr($bencoded, $pos, $spn);
+				$value = ($negative) ? -$value : +$value;
 
 				$pos += $spn;
 				if ($bencoded[$pos] !== 'e')

@@ -171,6 +171,14 @@ class Test extends PHPUnit_Framework_TestCase
 				'lxe',
 				new RuntimeException('Invalid character found at offset 1')
 			],
+			[
+				'i',
+				new RuntimeException('Premature end of data')
+			],
+			[
+				'i-1-e',
+				new RuntimeException('Invalid integer end found at offset 3')
+			],
 		];
 	}
 }
