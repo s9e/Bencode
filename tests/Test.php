@@ -70,6 +70,13 @@ class Test extends PHPUnit_Framework_TestCase
 				'd3:fool1:a1:b1:cee',
 				['foo' => ['a', 'b', 'c']]
 			],
+			[
+				'd3:food3:bari1ee1:xd1:yi1eee',
+				new ArrayObject([
+					'foo' => new ArrayObject(['bar' => 1]),
+					'x'   => new ArrayObject(['y' => 1])
+				])
+			],
 		];
 	}
 

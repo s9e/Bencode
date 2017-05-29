@@ -211,7 +211,7 @@ class Bencode
 			$value = (object) $value;
 		}
 
-		if ($value instanceof stdClass)
+		if ($value instanceof stdClass || $value instanceof ArrayObject)
 		{
 			$vars = get_object_vars($value);
 			ksort($vars);
