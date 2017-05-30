@@ -213,19 +213,30 @@ class Bencode
 
 		if ($value instanceof stdClass || $value instanceof ArrayObject)
 		{
-			$vars = get_object_vars($value);
-			ksort($vars);
-
-			$str = 'd';
-			foreach ($vars as $k => $v)
-			{
-				$str .= strlen($k) . ':' . $k . self::encode($v);
-			}
-			$str .= 'e';
-
-			return $str;
+			return self::encodeDictionary($value);
 		}
 
 		throw new InvalidArgumentException('Unsupported value');
+	}
+
+	/**
+	* Encode given object instance into a dictionary
+	*
+	* @param  object $dict
+	* @return string
+	*/
+	protected static function encodeDictionary($dict)
+	{
+		$vars = get_object_vars($dict);
+		ksort($vars);
+
+		$str = 'd';
+		foreach ($vars as $k => $v)
+		{
+			$str .= strlen($k) . ':' . $k . self::encode($v);
+		}
+		$str .= 'e';
+
+		return $str;
 	}
 }
