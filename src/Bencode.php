@@ -185,30 +185,14 @@ class Bencode
 	*/
 	public static function encode($value)
 	{
-		if (is_string($value))
+		if (is_scalar($value))
 		{
-			return strlen($value) . ':' . $value;
+			return self::encodeScalar($value);
 		}
 
-		if (is_numeric($value) || is_bool($value))
-		{
-			return sprintf('i%de', round($value));
-		}
-		
 		if (is_array($value))
 		{
-			if (empty($value))
-			{
-				return 'le';
-			}
-
-			if (array_keys($value) === range(0, count($value) - 1))
-			{
-				return 'l' . implode('', array_map(__METHOD__, $value)) . 'e';
-			}
-
-			// Cast as object to force it to be represented as a dictionary
-			$value = (object) $value;
+			return self::encodeArray($value);
 		}
 
 		if ($value instanceof stdClass || $value instanceof ArrayObject)
@@ -217,6 +201,28 @@ class Bencode
 		}
 
 		throw new InvalidArgumentException('Unsupported value');
+	}
+
+	/**
+	* Encode an array into either an array of a dictionary
+	*
+	* @param  array $value
+	* @return string
+	*/
+	protected static function encodeArray(array $value)
+	{
+		if (empty($value))
+		{
+			return 'le';
+		}
+
+		if (array_keys($value) === range(0, count($value) - 1))
+		{
+			return 'l' . implode('', array_map([__CLASS__, 'encode'], $value)) . 'e';
+		}
+
+		// Encode associative arrays as dictionaries
+		return self::encodeDictionary((object) $value);
 	}
 
 	/**
@@ -238,5 +244,21 @@ class Bencode
 		$str .= 'e';
 
 		return $str;
+	}
+
+	/**
+	* Encode a scalar value
+	*
+	* @param  mixed  $value
+	* @return string
+	*/
+	protected static function encodeScalar($value)
+	{
+		if (is_int($value) || is_float($value) || is_bool($value))
+		{
+			return sprintf('i%de', round($value));
+		}
+		
+		return strlen($value) . ':' . $value;
 	}
 }
