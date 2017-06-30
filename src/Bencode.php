@@ -258,7 +258,7 @@ class Bencode
 		{
 			return sprintf('i%de', round($value));
 		}
-		
+
 		return strlen($value) . ':' . $value;
 	}
 }
