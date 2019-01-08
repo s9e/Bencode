@@ -2,7 +2,7 @@
 
 /**
 * @package   s9e\Bencode
-* @copyright Copyright (c) 2014-2017 The s9e Authors
+* @copyright Copyright (c) 2014-2019 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\Bencode;
@@ -27,6 +27,9 @@ class Bencode
 			throw new InvalidArgumentException;
 		}
 
+		$dictionary = new ArrayObject;
+		$dictionary->setFlags(ArrayObject::ARRAY_AS_PROPS);
+
 		$pos = 0;
 		$max = strlen($bencoded) - 1;
 
@@ -42,7 +45,42 @@ class Bencode
 		while ($pos <= $max)
 		{
 			$c = $bencoded[$pos];
-			if ($c === 'e')
+			if ($c === 'i')
+			{
+				$negative = false;
+				if ($bencoded[++$pos] === '-')
+				{
+					$negative = true;
+					++$pos;
+				}
+
+				$spn = strspn($bencoded, '1234567890', $pos);
+				if (!$spn)
+				{
+					$pos -= ($negative) ? 2 : 1;
+
+					throw new RuntimeException('Invalid integer found at offset ' . $pos);
+				}
+
+				// Capture the value and cast it as an integer/float
+				$value = (int) substr($bencoded, $pos, $spn);
+				if ($negative)
+				{
+					$value = -$value;
+				}
+
+				$pos += $spn;
+				if ($bencoded[$pos] !== 'e')
+				{
+					$pos -= $spn;
+					$pos -= ($negative) ? 2 : 1;
+
+					throw new RuntimeException('Invalid integer found at offset ' . $pos);
+				}
+
+				++$pos;
+			}
+			elseif ($c === 'e')
 			{
 				if (isset($currentKey))
 				{
@@ -61,49 +99,15 @@ class Bencode
 
 				continue;
 			}
-
-			if ($c === 'd')
+			elseif ($c === 'd')
 			{
 				++$pos;
-				$value = new ArrayObject;
-				$value->setFlags(ArrayObject::ARRAY_AS_PROPS);
+				$value = clone $dictionary;
 			}
 			elseif ($c === 'l')
 			{
 				++$pos;
 				$value = [];
-			}
-			elseif ($c === 'i')
-			{
-				if ($pos === $max)
-				{
-					throw new RuntimeException('Premature end of data');
-				}
-
-				$negative = false;
-				if ($bencoded[++$pos] === '-')
-				{
-					$negative = true;
-					++$pos;
-				}
-
-				$spn = strspn($bencoded, '1234567890', $pos);
-				if (!$spn)
-				{
-					throw new RuntimeException('Invalid integer found at offset ' . $pos);
-				}
-
-				// Capture the value and cast it as an integer/float
-				$value = substr($bencoded, $pos, $spn);
-				$value = ($negative) ? -$value : +$value;
-
-				$pos += $spn;
-				if ($bencoded[$pos] !== 'e')
-				{
-					throw new RuntimeException('Invalid integer end found at offset ' . $pos);
-				}
-
-				++$pos;
 			}
 			else
 			{

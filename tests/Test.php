@@ -176,27 +176,27 @@ class Test extends PHPUnit_Framework_TestCase
 			],
 			[
 				'ie',
-				new RuntimeException('Invalid integer found at offset 1')
+				new RuntimeException('Invalid integer found at offset 0')
 			],
 			[
 				'i1x',
-				new RuntimeException('Invalid integer end found at offset 2')
+				new RuntimeException('Invalid integer found at offset 0')
 			],
 			[
 				'lxe',
 				new RuntimeException('Invalid character found at offset 1')
 			],
 			[
-				'i',
-				new RuntimeException('Premature end of data')
+				'li',
+				new RuntimeException('Invalid integer found at offset 1')
 			],
 			[
 				'i-1-e',
-				new RuntimeException('Invalid integer end found at offset 3')
+				new RuntimeException('Invalid integer found at offset 0')
 			],
 			[
-				'i123',
-				new RuntimeException('Invalid integer end found at offset 4')
+				'lli123',
+				new RuntimeException('Invalid integer found at offset 2')
 			],
 			[
 				'3 abc',
