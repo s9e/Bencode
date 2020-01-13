@@ -189,15 +189,17 @@ class Bencode
 		{
 			return self::encodeScalar($value);
 		}
-
 		if (is_array($value))
 		{
 			return self::encodeArray($value);
 		}
-
-		if ($value instanceof stdClass || $value instanceof ArrayObject)
+		if ($value instanceof stdClass)
 		{
-			return self::encodeDictionary($value);
+			$value = new ArrayObject(get_object_vars($value));
+		}
+		if ($value instanceof ArrayObject)
+		{
+			return self::encodeArrayObject($value);
 		}
 
 		throw new InvalidArgumentException('Unsupported value');
@@ -219,15 +221,15 @@ class Bencode
 		}
 
 		// Encode associative arrays as dictionaries
-		return self::encodeDictionary((object) $value);
+		return self::encodeArrayObject(new ArrayObject($value));
 	}
 
 	/**
-	* Encode given object instance into a dictionary
+	* Encode given ArrayObject instance into a dictionary
 	*/
-	protected static function encodeDictionary(object $dict): string
+	protected static function encodeArrayObject(ArrayObject $dict): string
 	{
-		$vars = get_object_vars($dict);
+		$vars = $dict->getArrayCopy();
 		ksort($vars);
 
 		$str = 'd';

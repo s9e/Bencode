@@ -62,6 +62,10 @@ class Test extends TestCase
 				['foo' => 1]
 			],
 			[
+				'd3:fooi1ee',
+				(object) ['foo' => 1]
+			],
+			[
 				'd3:bari2e3:fooi1ee',
 				['foo' => 1, 'bar' => 2]
 			],
@@ -205,5 +209,20 @@ class Test extends TestCase
 				new RuntimeException('Unexpected content ending at offset 10')
 			],
 		];
+	}
+
+	public function testDecodeDictionaryAccess()
+	{
+		$dict = Bencode::decode('d3:bar4:spam3:fooi42ee');
+
+		$this->assertSame('spam', $dict->bar);
+		$this->assertSame(42,     $dict['foo']);
+
+		$actual = [];
+		foreach ($dict as $k => $v)
+		{
+			$actual[$k] = $v;
+		}
+		$this->assertSame(['bar' => 'spam', 'foo' => 42], $actual);
 	}
 }
