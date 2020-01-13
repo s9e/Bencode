@@ -1,21 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace s9e\Bencode\Tests;
 
 use ArrayObject;
 use InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use TypeError;
 use s9e\Bencode\Bencode;
 use stdClass;
 
-class Test extends PHPUnit_Framework_TestCase
+class Test extends TestCase
 {
-	/**
-	* @expectedException InvalidArgumentException
-	*/
 	public function testUnsupported()
 	{
+		$this->expectException('InvalidArgumentException');
 		Bencode::encode(function(){});
 	}
 
@@ -135,11 +134,10 @@ class Test extends PHPUnit_Framework_TestCase
 
 	/**
 	* @dataProvider getDecodeInvalidTests
-	* @expectedException RuntimeException
 	*/
 	public function testDecodeInvalid($input, $expected)
 	{
-		$this->setExpectedException(get_class($expected), $expected->getMessage());
+		$this->expectException(get_class($expected), $expected->getMessage());
 		$this->assertNull(Bencode::decode($input));
 	}
 
@@ -148,7 +146,7 @@ class Test extends PHPUnit_Framework_TestCase
 		return [
 			[
 				null,
-				new InvalidArgumentException
+				new TypeError
 			],
 			[
 				'',

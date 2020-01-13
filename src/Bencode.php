@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
 * @package   s9e\Bencode
-* @copyright Copyright (c) 2014-2019 The s9e Authors
+* @copyright Copyright (c) 2014-2020 The s9e authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\Bencode;
@@ -20,9 +20,9 @@ class Bencode
 	* @param  string $bencoded Bencoded string
 	* @return mixed            Decoded value
 	*/
-	public static function decode($bencoded)
+	public static function decode(string $bencoded)
 	{
-		if (!is_string($bencoded) || $bencoded === '')
+		if ($bencoded === '')
 		{
 			throw new InvalidArgumentException;
 		}
@@ -47,10 +47,9 @@ class Bencode
 			$c = $bencoded[$pos];
 			if ($c === 'i')
 			{
-				$negative = false;
-				if ($bencoded[++$pos] === '-')
+				$negative = ($bencoded[++$pos] === '-');
+				if ($negative)
 				{
-					$negative = true;
 					++$pos;
 				}
 
@@ -94,7 +93,7 @@ class Bencode
 
 				++$pos;
 				--$depth;
-				$current = &$structures[$depth];
+				$current     = &$structures[$depth];
 				$currentType = $types[$depth - 1];
 
 				continue;
@@ -183,11 +182,8 @@ class Bencode
 
 	/**
 	* Bencode a value
-	*
-	* @param  mixed  $value Original value
-	* @return string        Bencoded string
 	*/
-	public static function encode($value)
+	public static function encode($value): string
 	{
 		if (is_scalar($value))
 		{
@@ -209,11 +205,8 @@ class Bencode
 
 	/**
 	* Encode an array into either an array of a dictionary
-	*
-	* @param  array $value
-	* @return string
 	*/
-	protected static function encodeArray(array $value)
+	protected static function encodeArray(array $value): string
 	{
 		if (empty($value))
 		{
@@ -231,11 +224,8 @@ class Bencode
 
 	/**
 	* Encode given object instance into a dictionary
-	*
-	* @param  object $dict
-	* @return string
 	*/
-	protected static function encodeDictionary($dict)
+	protected static function encodeDictionary(object $dict): string
 	{
 		$vars = get_object_vars($dict);
 		ksort($vars);
@@ -252,11 +242,8 @@ class Bencode
 
 	/**
 	* Encode a scalar value
-	*
-	* @param  mixed  $value
-	* @return string
 	*/
-	protected static function encodeScalar($value)
+	protected static function encodeScalar($value): string
 	{
 		if (is_int($value) || is_float($value) || is_bool($value))
 		{
