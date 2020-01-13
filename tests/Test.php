@@ -74,6 +74,10 @@ class Test extends TestCase
 				['foo' => ['a', 'b', 'c']]
 			],
 			[
+				'd0:l1:a1:b1:cee',
+				['' => ['a', 'b', 'c']]
+			],
+			[
 				'd3:food3:bari1ee1:xd1:yi1eee',
 				new ArrayObject([
 					'foo' => new ArrayObject(['bar' => 1]),
@@ -132,6 +136,10 @@ class Test extends TestCase
 			[
 				'3:abc',
 				'abc'
+			],
+			[
+				'd0:l1:a1:b1:cee',
+				new ArrayObject(['' => ['a', 'b', 'c']])
 			],
 		];
 	}
