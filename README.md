@@ -4,13 +4,8 @@ s9e\Bencode is a simple [Bencode](http://en.wikipedia.org/wiki/Bencode) encoder/
 
 ### Installation
 
-Via composer:
-```yaml
-{
-    "require": {
-        "s9e/bencode": "*"
-    }
-}
+```bash
+composer require s9e/bencode
 ```
 
 ### Usage
@@ -41,5 +36,5 @@ d3:bar4:spam3:fooi42ee
 
  - Rejects invalid bencoded data with meaningful exception messages.
  - Uses ArrayObject instances to represent dictionaries. Dictionaries can be created and read using either the array notation or the object notation.
- - The encoder accepts floats and booleans and converts them to integers.
+ - The encoder accepts floats and booleans but converts them to integers.
  - The decoder is not recursive and can read arbitrarily deep structures regardless of stack or recursion limits.
