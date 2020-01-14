@@ -1,8 +1,7 @@
 {
 	"name": "s9e/bencode",
-	"version": "1.2.0",
 	"type": "library",
-	"description": "Bencode decoder/encoder",
+	"description": "Fast and efficient bencode decoder/encoder",
 	"homepage": "https://github.com/s9e/Bencode/",
 	"keywords": ["bencode","bittorrent","torrent"],
 	"license": "MIT",
