@@ -149,7 +149,8 @@ class Test extends TestCase
 	*/
 	public function testDecodeInvalid($input, $expected)
 	{
-		$this->expectException(get_class($expected), $expected->getMessage());
+		$this->expectException(get_class($expected));
+		$this->expectExceptionMessage($expected->getMessage());
 		$this->assertNull(Bencode::decode($input));
 	}
 
@@ -158,7 +159,7 @@ class Test extends TestCase
 		return [
 			[
 				null,
-				new TypeError
+				new TypeError('Argument 1 passed to s9e\Bencode\Bencode::decode() must be of the type string')
 			],
 			[
 				'',
@@ -213,8 +214,20 @@ class Test extends TestCase
 				new RuntimeException('Invalid character found at offset 1')
 			],
 			[
+				'3a3:abc',
+				new RuntimeException('Invalid character found')
+			],
+			[
+				':a',
+				new RuntimeException('Invalid character found')
+			],
+			[
 				'3:abc3:abc',
 				new RuntimeException('Unexpected content ending at offset 10')
+			],
+			[
+				'l11:ae',
+				new RuntimeException('Premature end of data')
 			],
 		];
 	}
