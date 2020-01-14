@@ -31,10 +31,10 @@ class Bencode
 		$dictionary->setFlags(ArrayObject::ARRAY_AS_PROPS);
 
 		$pos = 0;
-		$max = strlen($bencoded) - 1;
+		$eot = strlen($bencoded);
 
-		// Pad the bencoded string with a NUL byte so we don't have to check for boundary
-		$bencoded .= "\0";
+		// Pad the bencoded string with an EOT character so we don't have to check for boundary
+		$bencoded .= "\4";
 
 		$current     = null;
 		$currentKey  = null;
@@ -42,7 +42,7 @@ class Bencode
 		$depth       = 0;
 		$structures  = [];
 
-		while ($pos <= $max)
+		while ($pos < $eot)
 		{
 			$c = $bencoded[$pos];
 			if ($c === 'i')
@@ -86,13 +86,13 @@ class Bencode
 					throw new RuntimeException('Premature end of dictionary at offset ' . $pos);
 				}
 
-				if ($depth <= 1)
+				++$pos;
+				--$depth;
+				if ($depth < 1)
 				{
 					break;
 				}
 
-				++$pos;
-				--$depth;
 				$current     = &$structures[$depth];
 				$currentType = $types[$depth - 1];
 
@@ -167,17 +167,17 @@ class Bencode
 			unset($value);
 		}
 
-		if ($pos < $max)
+		if ($pos === $eot && !$depth)
 		{
-			throw new RuntimeException('Superfluous content found at offset ' . ++$pos);
+			return $current;
 		}
 
-		if ($pos > $max && $depth)
+		if ($pos < $eot)
 		{
-			throw new RuntimeException('Premature end of data');
+			throw new RuntimeException('Superfluous content found at offset ' . $pos);
 		}
 
-		return $current;
+		throw new RuntimeException('Premature end of data');
 	}
 
 	/**

@@ -229,6 +229,10 @@ class Test extends TestCase
 				'l11:ae',
 				new RuntimeException('Premature end of data')
 			],
+			[
+				'11:a',
+				new RuntimeException('Premature end of data')
+			],
 		];
 	}
 
