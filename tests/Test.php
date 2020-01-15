@@ -186,7 +186,7 @@ class Test extends TestCase
 		return [
 			[
 				null,
-				new TypeError('Argument 1 passed to s9e\Bencode\Bencode::decode() must be of the type string')
+				new TypeError('Argument 1 passed to ' . Bencode::class . '::decode() must be of the type string')
 			],
 			[
 				'',
@@ -246,11 +246,11 @@ class Test extends TestCase
 			],
 			[
 				'3a3:abc',
-				new RuntimeException('Illegal character found')
+				new RuntimeException('Illegal character found at offset 1')
 			],
 			[
 				':a',
-				new RuntimeException('Illegal character found')
+				new RuntimeException('Illegal character found at offset 0')
 			],
 			[
 				'3:abc3:abc',
