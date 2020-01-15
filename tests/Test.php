@@ -18,6 +18,33 @@ class Test extends TestCase
 		Bencode::encode(function(){});
 	}
 
+	public function testMemory()
+	{
+		$reference = memory_get_peak_usage();
+
+		// Create a bencoded value that will be decoded into a string that is 2e6 characters long.
+		// The overhead from bencoding is 8 for "2000000:" and we avoid creating copies of the
+		// string by modifying it in place
+		$str    = str_repeat('0', 2000008);
+		$str[0] = '2';
+		$str[7] = ':';
+
+		$before = memory_get_peak_usage();
+		if ($before === $reference)
+		{
+			$this->markTestSkipped('Cannot measure peak memory before the reference value is too high');
+		}
+
+		$decoded  = Bencode::decode($str);
+		$after    = memory_get_peak_usage();
+		$delta    = $after - $before;
+		$overhead = $delta - strlen($decoded);
+
+		// Test that the overhead was less than ~30 KB
+		$this->assertLessThan(30e3, $overhead);
+		$this->assertEquals(2000000, strlen($decoded));
+	}
+
 	/**
 	* @dataProvider getEncodeTests
 	*/
@@ -199,15 +226,19 @@ class Test extends TestCase
 			],
 			[
 				'li',
-				new RuntimeException('Invalid integer found at offset 1')
+				new RuntimeException('Premature end of data')
 			],
 			[
 				'i-1-e',
 				new RuntimeException('Invalid integer found at offset 0')
 			],
 			[
+				'i-',
+				new RuntimeException('Premature end of data')
+			],
+			[
 				'lli123',
-				new RuntimeException('Invalid integer found at offset 2')
+				new RuntimeException('Premature end of data')
 			],
 			[
 				'3 abc',

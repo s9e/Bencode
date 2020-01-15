@@ -31,10 +31,7 @@ class Bencode
 		$dictionary->setFlags(ArrayObject::ARRAY_AS_PROPS);
 
 		$pos = 0;
-		$eot = strlen($bencoded);
-
-		// Pad the bencoded string with an EOT character so we don't have to check for boundary
-		$bencoded .= "\4";
+		$max = strlen($bencoded) - 1;
 
 		$current     = null;
 		$currentKey  = null;
@@ -42,12 +39,17 @@ class Bencode
 		$depth       = 0;
 		$structures  = [];
 
-		while ($pos < $eot)
+		while ($pos <= $max)
 		{
 			$c = $bencoded[$pos];
 			if ($c === 'i')
 			{
-				$negative = ($bencoded[++$pos] === '-');
+				if (++$pos > $max)
+				{
+					throw new RuntimeException('Premature end of data');
+				}
+
+				$negative = ($bencoded[$pos] === '-');
 				if ($negative)
 				{
 					++$pos;
@@ -56,6 +58,10 @@ class Bencode
 				$spn = strspn($bencoded, '1234567890', $pos);
 				if (!$spn)
 				{
+					if ($pos > $max)
+					{
+						throw new RuntimeException('Premature end of data');
+					}
 					$pos -= ($negative) ? 2 : 1;
 
 					throw new RuntimeException('Invalid integer found at offset ' . $pos);
@@ -69,6 +75,10 @@ class Bencode
 				}
 
 				$pos += $spn;
+				if ($pos > $max)
+				{
+					throw new RuntimeException('Premature end of data');
+				}
 				if ($bencoded[$pos] !== 'e')
 				{
 					$pos -= $spn;
@@ -118,6 +128,10 @@ class Bencode
 
 				$len = (int) substr($bencoded, $pos, $spn);
 				$pos += $spn;
+				if ($pos + $len > $max)
+				{
+					throw new RuntimeException('Premature end of data');
+				}
 				if ($bencoded[$pos] !== ':')
 				{
 					throw new RuntimeException('Invalid character found at offset ' . $pos);
@@ -167,12 +181,12 @@ class Bencode
 			unset($value);
 		}
 
-		if ($pos === $eot && !$depth)
+		if ($pos === $max + 1 && !$depth)
 		{
 			return $current;
 		}
 
-		if ($pos < $eot)
+		if ($pos <= $max)
 		{
 			throw new RuntimeException('Superfluous content found at offset ' . $pos);
 		}
