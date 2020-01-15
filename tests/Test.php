@@ -254,7 +254,7 @@ class Test extends TestCase
 			],
 			[
 				'3:abc3:abc',
-				new RuntimeException('Unexpected content ending at offset 10')
+				new RuntimeException('Superfluous content found at offset 5')
 			],
 			[
 				'l11:ae',

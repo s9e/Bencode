@@ -161,7 +161,9 @@ class Bencode
 			}
 			elseif (isset($current))
 			{
-				throw new RuntimeException('Unexpected content ending at offset ' . $pos);
+				$pos -= strlen(static::encode($value));
+
+				throw new RuntimeException('Superfluous content found at offset ' . $pos);
 			}
 			else
 			{
