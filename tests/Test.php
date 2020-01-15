@@ -272,6 +272,10 @@ class Test extends TestCase
 				'i0123e',
 				new RuntimeException('Illegal character found at offset 1')
 			],
+			[
+				'01:a',
+				new RuntimeException('Illegal character found at offset 0')
+			],
 		];
 	}
 

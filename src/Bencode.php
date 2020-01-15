@@ -128,7 +128,14 @@ class Bencode
 			else
 			{
 				$spn = strspn($bencoded, '1234567890', $pos);
-				if (!$spn)
+				if ($spn > 1)
+				{
+					if ($bencoded[$pos] === '0')
+					{
+						throw new RuntimeException('Illegal character found at offset ' . $pos);
+					}
+				}
+				elseif (!$spn)
 				{
 					throw new RuntimeException('Illegal character found at offset ' . $pos);
 				}
