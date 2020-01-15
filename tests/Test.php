@@ -194,7 +194,7 @@ class Test extends TestCase
 			],
 			[
 				'lxe',
-				new RuntimeException('Invalid character found at offset 1')
+				new RuntimeException('Illegal character found at offset 1')
 			],
 			[
 				'l',
@@ -222,7 +222,7 @@ class Test extends TestCase
 			],
 			[
 				'lxe',
-				new RuntimeException('Invalid character found at offset 1')
+				new RuntimeException('Illegal character found at offset 1')
 			],
 			[
 				'li',
@@ -242,15 +242,15 @@ class Test extends TestCase
 			],
 			[
 				'3 abc',
-				new RuntimeException('Invalid character found at offset 1')
+				new RuntimeException('Illegal character found at offset 1')
 			],
 			[
 				'3a3:abc',
-				new RuntimeException('Invalid character found')
+				new RuntimeException('Illegal character found')
 			],
 			[
 				':a',
-				new RuntimeException('Invalid character found')
+				new RuntimeException('Illegal character found')
 			],
 			[
 				'3:abc3:abc',

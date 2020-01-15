@@ -123,7 +123,7 @@ class Bencode
 				$spn = strspn($bencoded, '1234567890', $pos);
 				if (!$spn)
 				{
-					throw new RuntimeException('Invalid character found at offset ' . $pos);
+					throw new RuntimeException('Illegal character found at offset ' . $pos);
 				}
 
 				$len = (int) substr($bencoded, $pos, $spn);
@@ -134,7 +134,7 @@ class Bencode
 				}
 				if ($bencoded[$pos] !== ':')
 				{
-					throw new RuntimeException('Invalid character found at offset ' . $pos);
+					throw new RuntimeException('Illegal character found at offset ' . $pos);
 				}
 
 				$value = substr($bencoded, ++$pos, $len);
