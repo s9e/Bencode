@@ -126,12 +126,16 @@ class Test extends TestCase
 	{
 		return [
 			[
-				'i22e',
-				22
+				'i1234567890e',
+				1234567890
 			],
 			[
 				'i-1e',
 				-1
+			],
+			[
+				'i0e',
+				0
 			],
 			[
 				'le',
@@ -263,6 +267,10 @@ class Test extends TestCase
 			[
 				'11:a',
 				new RuntimeException('Premature end of data')
+			],
+			[
+				'i0123e',
+				new RuntimeException('Illegal character found at offset 1')
 			],
 		];
 	}
