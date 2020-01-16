@@ -142,13 +142,13 @@ class Bencode
 
 				$len = (int) substr($bencoded, $pos, $spn);
 				$pos += $spn;
-				if ($pos + $len > $max)
-				{
-					throw new RuntimeException('Premature end of data');
-				}
 				if ($bencoded[$pos] !== ':')
 				{
 					throw new RuntimeException('Illegal character found at offset ' . $pos);
+				}
+				if ($pos + $len > $max)
+				{
+					throw new RuntimeException('Premature end of data');
 				}
 
 				$value = substr($bencoded, ++$pos, $len);

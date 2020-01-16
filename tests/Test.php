@@ -172,6 +172,26 @@ class Test extends TestCase
 				'd0:l1:a1:b1:cee',
 				new ArrayObject(['' => ['a', 'b', 'c']])
 			],
+			[
+				'0:',
+				''
+			],
+			[
+				'1:i',
+				'i'
+			],
+			[
+				'2:i-',
+				'i-'
+			],
+			[
+				'3:i-1',
+				'i-1'
+			],
+			[
+				'4:i-1e',
+				'i-1e'
+			],
 		];
 	}
 
@@ -253,12 +273,29 @@ class Test extends TestCase
 				new RuntimeException('Illegal character found at offset 1')
 			],
 			[
+				'3a',
+				new RuntimeException('Illegal character found at offset 1')
+			],
+			[
 				':a',
 				new RuntimeException('Illegal character found at offset 0')
 			],
 			[
 				'3:abc3:abc',
 				new RuntimeException('Superfluous content found at offset 5')
+			],
+			[
+				'3:abci',
+				new RuntimeException('Premature end of data')
+//				new RuntimeException('Superfluous content found at offset 5')
+			],
+			[
+				'3:',
+				new RuntimeException('Premature end of data')
+			],
+			[
+				'3:a',
+				new RuntimeException('Premature end of data')
 			],
 			[
 				'l11:ae',
