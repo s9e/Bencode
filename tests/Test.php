@@ -303,18 +303,18 @@ class Test extends TestCase
 			],
 			[
 				'3:',
-				new RuntimeException('Premature end of data')
+				new RuntimeException('Premature end of data while reading string at offset 2')
 			],
 			[
 				'3:a',
-				new RuntimeException('Premature end of data')
+				new RuntimeException('Premature end of data while reading string at offset 2')
+			],
+			[
+				'2:a',
+				new RuntimeException('Premature end of data while reading string at offset 2')
 			],
 			[
 				'l11:ae',
-				new RuntimeException('Premature end of data')
-			],
-			[
-				'11:a',
 				new RuntimeException('Premature end of data')
 			],
 			[
@@ -327,11 +327,7 @@ class Test extends TestCase
 			],
 			[
 				'1',
-				new RuntimeException('Premature end of data')
-			],
-			[
-				'1:',
-				new RuntimeException('Premature end of data')
+				new RuntimeException('Premature end of data while reading string length at offset 0')
 			],
 			[
 				'e',

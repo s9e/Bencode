@@ -148,7 +148,7 @@ class Bencode
 				$pos += $spn;
 				if ($pos > $max)
 				{
-					throw new RuntimeException('Premature end of data');
+					throw new RuntimeException('Premature end of data while reading string length at offset ' . ($pos - $spn));
 				}
 				if ($bencoded[$pos] !== ':')
 				{
@@ -156,11 +156,11 @@ class Bencode
 				}
 				if ($pos + $len > $max)
 				{
-					throw new RuntimeException('Premature end of data');
+					throw new RuntimeException('Premature end of data while reading string at offset ' . ($pos + 1));
 				}
 
 				$value = substr($bencoded, ++$pos, $len);
-				$pos += $len;
+				$pos  += $len;
 			}
 
 			if (isset($currentKey))
