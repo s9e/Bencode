@@ -333,6 +333,10 @@ class Test extends TestCase
 				'1:',
 				new RuntimeException('Premature end of data')
 			],
+			[
+				'e',
+				new RuntimeException('Illegal character found at offset 0')
+			],
 		];
 	}
 

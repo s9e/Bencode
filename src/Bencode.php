@@ -107,6 +107,10 @@ class Bencode
 				--$depth;
 				if ($depth < 1)
 				{
+					if ($depth < 0)
+					{
+						throw new RuntimeException('Illegal character found at offset ' . ($pos - 1));
+					}
 					break;
 				}
 
