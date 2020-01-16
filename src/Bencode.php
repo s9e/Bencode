@@ -201,17 +201,16 @@ class Bencode
 			unset($value);
 		}
 
-		if ($pos === $max + 1 && !$depth)
+		if ($depth > 0)
 		{
-			return $current;
+			throw new RuntimeException('Premature end of data');
 		}
-
 		if ($pos <= $max)
 		{
 			throw new RuntimeException('Superfluous content found at offset ' . $pos);
 		}
 
-		throw new RuntimeException('Premature end of data');
+		return $current;
 	}
 
 	/**
