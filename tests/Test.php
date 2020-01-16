@@ -257,7 +257,19 @@ class Test extends TestCase
 				new RuntimeException('Invalid integer found at offset 0')
 			],
 			[
+				'i',
+				new RuntimeException('Premature end of data')
+			],
+			[
 				'i-',
+				new RuntimeException('Premature end of data')
+			],
+			[
+				'i1',
+				new RuntimeException('Premature end of data')
+			],
+			[
+				'i-1',
 				new RuntimeException('Premature end of data')
 			],
 			[
@@ -312,6 +324,14 @@ class Test extends TestCase
 			[
 				'01:a',
 				new RuntimeException('Illegal character found at offset 0')
+			],
+			[
+				'1',
+				new RuntimeException('Premature end of data')
+			],
+			[
+				'1:',
+				new RuntimeException('Premature end of data')
 			],
 		];
 	}
