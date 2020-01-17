@@ -250,7 +250,7 @@ class Test extends TestCase
 			],
 			[
 				'li',
-				new RuntimeException('Premature end of data')
+				new RuntimeException('Premature end of data while reading integer at offset 1')
 			],
 			[
 				'i-1-e',
@@ -258,23 +258,23 @@ class Test extends TestCase
 			],
 			[
 				'i',
-				new RuntimeException('Premature end of data')
+				new RuntimeException('Premature end of data while reading integer at offset 0')
 			],
 			[
 				'i-',
-				new RuntimeException('Premature end of data')
+				new RuntimeException('Premature end of data while reading integer at offset 0')
 			],
 			[
 				'i1',
-				new RuntimeException('Premature end of data')
+				new RuntimeException('Premature end of data while reading integer at offset 0')
 			],
 			[
 				'i-1',
-				new RuntimeException('Premature end of data')
+				new RuntimeException('Premature end of data while reading integer at offset 0')
 			],
 			[
 				'lli123',
-				new RuntimeException('Premature end of data')
+				new RuntimeException('Premature end of data while reading integer at offset 2')
 			],
 			[
 				'3 abc',
@@ -315,7 +315,7 @@ class Test extends TestCase
 			],
 			[
 				'l11:ae',
-				new RuntimeException('Premature end of data')
+				new RuntimeException('Premature end of data while reading string at offset 4')
 			],
 			[
 				'i0123e',

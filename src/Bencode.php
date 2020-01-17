@@ -46,7 +46,7 @@ class Bencode
 			{
 				if (++$pos > $max)
 				{
-					throw new RuntimeException('Premature end of data');
+					throw new RuntimeException('Premature end of data while reading integer at offset ' . ($pos - 1));
 				}
 
 				$negative = ($bencoded[$pos] === '-');
@@ -65,13 +65,10 @@ class Bencode
 				}
 				elseif (!$spn)
 				{
-					if ($pos > $max)
-					{
-						throw new RuntimeException('Premature end of data');
-					}
+					$msg  = ($pos > $max) ? 'Premature end of data while reading integer' : 'Invalid integer found';
 					$pos -= ($negative) ? 2 : 1;
 
-					throw new RuntimeException('Invalid integer found at offset ' . $pos);
+					throw new RuntimeException($msg . ' at offset ' . $pos);
 				}
 
 				// Capture the value and cast it as an integer/float
@@ -84,7 +81,7 @@ class Bencode
 				$pos += $spn;
 				if ($pos > $max)
 				{
-					throw new RuntimeException('Premature end of data');
+					throw new RuntimeException('Premature end of data while reading integer at offset ' . ($pos - 1 - $spn - $negative));
 				}
 				if ($bencoded[$pos] !== 'e')
 				{
