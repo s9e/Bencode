@@ -256,10 +256,10 @@ class Test extends TestCase
 				'lxe',
 				new RuntimeException('Illegal character found at offset 1')
 			],
-//			[
-//				'3:abcd',
-//				new RuntimeException('Superfluous content found at offset 5')
-//			],
+			[
+				'3:abcd',
+				new RuntimeException('Superfluous content found at offset 5')
+			],
 			[
 				'li',
 				new RuntimeException('Premature end of data while reading integer at offset 1')

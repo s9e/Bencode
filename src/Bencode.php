@@ -180,9 +180,7 @@ class Bencode
 			}
 			elseif (isset($current))
 			{
-				$pos -= strlen(static::encode($value));
-
-				throw new RuntimeException('Superfluous content found at offset ' . $pos);
+				throw new RuntimeException('Superfluous content found at offset ' . strlen(static::encode($current)));
 			}
 			else
 			{
