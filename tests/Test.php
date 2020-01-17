@@ -229,6 +229,10 @@ class Test extends TestCase
 				new RuntimeException('Superfluous content found at offset 2')
 			],
 			[
+				'le0',
+				new RuntimeException('Superfluous content found at offset 2')
+			],
+			[
 				'ddee',
 				new RuntimeException('Invalid dictionary key type "d"')
 			],
@@ -248,9 +252,17 @@ class Test extends TestCase
 				'lxe',
 				new RuntimeException('Illegal character found at offset 1')
 			],
+//			[
+//				'3:abcd',
+//				new RuntimeException('Superfluous content found at offset 5')
+//			],
 			[
 				'li',
 				new RuntimeException('Premature end of data while reading integer at offset 1')
+			],
+			[
+				'l3',
+				new RuntimeException('Premature end of data while reading string length at offset 1')
 			],
 			[
 				'i-1-e',
