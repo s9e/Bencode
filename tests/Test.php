@@ -314,8 +314,7 @@ class Test extends TestCase
 			],
 			[
 				'3:abci',
-				new RuntimeException('Premature end of data')
-//				new RuntimeException('Superfluous content found at offset 5')
+				new RuntimeException('Superfluous content found at offset 5')
 			],
 			[
 				'3:',
@@ -351,6 +350,10 @@ class Test extends TestCase
 			],
 			[
 				'e',
+				new RuntimeException('Illegal character found at offset 0')
+			],
+			[
+				'-1',
 				new RuntimeException('Illegal character found at offset 0')
 			],
 		];

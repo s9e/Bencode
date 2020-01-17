@@ -30,8 +30,9 @@ class Bencode
 		$dictionary = new ArrayObject;
 		$dictionary->setFlags(ArrayObject::ARRAY_AS_PROPS);
 
-		$pos = 0;
-		$max = strlen($bencoded) - 1;
+		$pos      = 0;
+		$max      = strlen($bencoded) - 1;
+		$boundary = self::getSafeBoundary($bencoded, $max);
 
 		$current     = null;
 		$currentKey  = null;
@@ -39,18 +40,13 @@ class Bencode
 		$depth       = 0;
 		$structures  = [];
 
-		while ($pos <= $max)
+		while ($pos <= $boundary)
 		{
 			$c = $bencoded[$pos];
 			if ($c === 'i')
 			{
-				if (++$pos > $max)
-				{
-					throw new RuntimeException('Premature end of data while reading integer at offset ' . ($pos - 1));
-				}
-
-				$negative = ($bencoded[$pos] === '-');
-				if ($negative && ++$pos <= $max && $bencoded[$pos] === '0')
+				$negative = ($bencoded[++$pos] === '-');
+				if ($negative && $bencoded[++$pos] === '0')
 				{
 					throw new RuntimeException('Illegal character found at offset ' . $pos);
 				}
@@ -65,10 +61,9 @@ class Bencode
 				}
 				elseif (!$spn)
 				{
-					$msg  = ($pos > $max) ? 'Premature end of data while reading integer' : 'Invalid integer found';
 					$pos -= ($negative) ? 2 : 1;
 
-					throw new RuntimeException($msg . ' at offset ' . $pos);
+					throw new RuntimeException('Invalid integer found at offset ' . $pos);
 				}
 
 				// Capture the value and cast it as an integer/float
@@ -79,10 +74,6 @@ class Bencode
 				}
 
 				$pos += $spn;
-				if ($pos > $max)
-				{
-					throw new RuntimeException('Premature end of data while reading integer at offset ' . ($pos - 1 - $spn - $negative));
-				}
 				if ($bencoded[$pos] !== 'e')
 				{
 					$pos -= $spn;
@@ -143,17 +134,9 @@ class Bencode
 
 				$len  = (int) substr($bencoded, $pos, $spn);
 				$pos += $spn;
-				if ($pos > $max)
-				{
-					throw new RuntimeException('Premature end of data while reading string length at offset ' . ($pos - $spn));
-				}
 				if ($bencoded[$pos] !== ':')
 				{
 					throw new RuntimeException('Illegal character found at offset ' . $pos);
-				}
-				if ($pos + $len > $max)
-				{
-					throw new RuntimeException('Premature end of data while reading string at offset ' . ($pos + 1));
 				}
 
 				$value = substr($bencoded, ++$pos, $len);
@@ -200,16 +183,35 @@ class Bencode
 			unset($value);
 		}
 
-		if ($depth > 0)
+		if (!$depth)
 		{
-			throw new RuntimeException('Premature end of data');
-		}
-		if ($pos <= $max)
-		{
-			throw new RuntimeException('Superfluous content found at offset ' . $pos);
+			if ($pos === $max + 1)
+			{
+				return $current;
+			}
+			if ($pos <= $max && isset($current))
+			{
+				throw new RuntimeException('Superfluous content found at offset ' . $pos);
+			}
 		}
 
-		return $current;
+		if ($pos <= $max)
+		{
+			if ($bencoded[$pos] === 'i')
+			{
+				throw new RuntimeException('Premature end of data while reading integer at offset ' . $pos);
+			}
+			if (is_numeric($bencoded[$pos]))
+			{
+				throw new RuntimeException('Premature end of data while reading string length at offset ' . $pos);
+			}
+		}
+		if ($pos > $max + 1 && isset($len))
+		{
+			throw new RuntimeException('Premature end of data while reading string at offset ' . ($pos - $len));
+		}
+
+		throw new RuntimeException('Premature end of data');
 	}
 
 	/**
@@ -285,5 +287,29 @@ class Bencode
 		}
 
 		return strlen($value) . ':' . $value;
+	}
+
+	/**
+	* Adjust the rightmost boundary to the last safe character
+	*
+	* Will rewind the boundary to skip the rightmost digits, optionally preceded by "i" or "i-"
+	*/
+	protected static function getSafeBoundary(string $bencoded, int $boundary): int
+	{
+		$c = $bencoded[$boundary];
+		while (is_numeric($c) && --$boundary >= 0)
+		{
+			$c = $bencoded[$boundary];
+		}
+		if ($c === '-' && $boundary > 0 && $bencoded[$boundary - 1] === 'i')
+		{
+			$boundary -= 2;
+		}
+		elseif ($c === 'i')
+		{
+			--$boundary;
+		}
+
+		return $boundary;
 	}
 }
