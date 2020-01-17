@@ -225,6 +225,10 @@ class Test extends TestCase
 				new RuntimeException('Premature end of data')
 			],
 			[
+				'lle',
+				new RuntimeException('Premature end of data')
+			],
+			[
 				'lee',
 				new RuntimeException('Superfluous content found at offset 2')
 			],
