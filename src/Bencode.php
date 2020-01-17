@@ -50,9 +50,9 @@ class Bencode
 				}
 
 				$negative = ($bencoded[$pos] === '-');
-				if ($negative)
+				if ($negative && ++$pos <= $max && $bencoded[$pos] === '0')
 				{
-					++$pos;
+					throw new RuntimeException('Illegal character found at offset ' . $pos);
 				}
 
 				$spn = strspn($bencoded, '1234567890', $pos);

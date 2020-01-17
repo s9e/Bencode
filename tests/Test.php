@@ -338,6 +338,10 @@ class Test extends TestCase
 				new RuntimeException('Illegal character found at offset 1')
 			],
 			[
+				'i-0e',
+				new RuntimeException('Illegal character found at offset 2')
+			],
+			[
 				'01:a',
 				new RuntimeException('Illegal character found at offset 0')
 			],
