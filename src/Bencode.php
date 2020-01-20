@@ -145,6 +145,12 @@ class Bencode
 
 			if (isset($currentKey))
 			{
+				if (isset($current->$currentKey))
+				{
+					$pos -= strlen(self::encode($currentKey)) + strlen(self::encode($value)) - !is_scalar($value);
+
+					throw new RuntimeException("Duplicate dictionary entry '" . $currentKey . "' at pos " . $pos);
+				}
 				$current->$currentKey = &$value;
 				$currentKey = null;
 			}

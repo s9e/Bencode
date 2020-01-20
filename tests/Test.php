@@ -360,6 +360,14 @@ class Test extends TestCase
 				'-1',
 				new RuntimeException('Illegal character found at offset 0')
 			],
+			[
+				'd3:fooi0e3:foo3:abce',
+				new RuntimeException("Duplicate dictionary entry 'foo' at pos 9")
+			],
+			[
+				'd4:abcdi0e4:abcdli0eee',
+				new RuntimeException("Duplicate dictionary entry 'abcd' at pos 10")
+			],
 		];
 	}
 
