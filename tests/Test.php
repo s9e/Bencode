@@ -192,6 +192,10 @@ class Test extends TestCase
 				'4:i-1e',
 				'i-1e'
 			],
+			[
+				'lli0ei1eeli2ei3eee',
+				[[0, 1], [2, 3]]
+			],
 		];
 	}
 
