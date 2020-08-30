@@ -12,20 +12,63 @@ use stdClass;
 
 class Test extends TestCase
 {
+	public static function setUpBeforeClass(): void
+	{
+		// Preload the library so the memory-related tests don't count it as overhead
+		Bencode::decode('i1e');
+	}
+
 	public function testUnsupported()
 	{
 		$this->expectException('InvalidArgumentException');
 		Bencode::encode(function(){});
 	}
 
-	public function testMemory()
+	/**
+	* @group memory
+	*/
+	public function testMemoryList()
+	{
+		$reference = memory_get_peak_usage();
+
+		$len = 10000;
+		$str = str_repeat('i0e', $len + 2);
+		for ($i = 0; $i < 3; ++$i)
+		{
+			$str[$i]      = 'l';
+			$str[-3 + $i] = 'e';
+		}
+
+		// Create a copy of the expected result so we get a feel for how much memory it will use
+		$expected = array_fill(0, $len, 0);
+		unset($expected);
+
+		$before = memory_get_peak_usage();
+		if ($before === $reference)
+		{
+			$this->markTestSkipped('Cannot measure peak memory before the reference value is too high');
+		}
+
+		$decoded = Bencode::decode($str);
+		$after   = memory_get_peak_usage();
+		$delta   = $after - $before;
+
+		// Test that the delta is less than ~4 KB
+		$this->assertLessThan(4000, $delta);
+	}
+
+	/**
+	* @group memory
+	*/
+	public function testMemoryString()
 	{
 		$reference = memory_get_peak_usage();
 
 		// Create a bencoded value that will be decoded into a string that is 2e6 characters long.
 		// The overhead from bencoding is 8 for "2000000:" and we avoid creating copies of the
 		// string by modifying it in place
-		$str    = str_repeat('0', 2000008);
+		$len    = 2000000;
+		$str    = str_repeat('0', $len + 8);
 		$str[0] = '2';
 		$str[7] = ':';
 
@@ -38,11 +81,11 @@ class Test extends TestCase
 		$decoded  = Bencode::decode($str);
 		$after    = memory_get_peak_usage();
 		$delta    = $after - $before;
-		$overhead = $delta - strlen($decoded);
+		$overhead = $delta - $len;
 
 		// Test that the overhead was less than ~30 KB
 		$this->assertLessThan(30e3, $overhead);
-		$this->assertEquals(2000000, strlen($decoded));
+		$this->assertEquals($len, strlen($decoded));
 	}
 
 	/**
@@ -242,19 +285,27 @@ class Test extends TestCase
 			],
 			[
 				'ddee',
-				new RuntimeException('Invalid dictionary key type "d"')
+				new RuntimeException('Illegal character found at offset 1')
 			],
 			[
 				'd1:xe',
-				new RuntimeException('Premature end of dictionary at offset 4')
+				new RuntimeException('Illegal character found at offset 4')
+			],
+			[
+				'd1:xl',
+				new RuntimeException('Premature end of data')
+			],
+			[
+				'd1:xx',
+				new RuntimeException('Illegal character found at offset 4')
 			],
 			[
 				'ie',
-				new RuntimeException('Invalid integer found at offset 0')
+				new RuntimeException('Illegal character found at offset 1')
 			],
 			[
 				'i1x',
-				new RuntimeException('Invalid integer found at offset 0')
+				new RuntimeException('Illegal character found at offset 2')
 			],
 			[
 				'lxe',
@@ -266,35 +317,39 @@ class Test extends TestCase
 			],
 			[
 				'li',
-				new RuntimeException('Premature end of data while reading integer at offset 1')
+				new RuntimeException('Premature end of data')
 			],
 			[
 				'l3',
-				new RuntimeException('Premature end of data while reading string length at offset 1')
+				new RuntimeException('Premature end of data')
 			],
 			[
 				'i-1-e',
-				new RuntimeException('Invalid integer found at offset 0')
+				new RuntimeException('Illegal character found at offset 3')
 			],
 			[
 				'i',
-				new RuntimeException('Premature end of data while reading integer at offset 0')
+				new RuntimeException('Premature end of data')
 			],
 			[
 				'i-',
-				new RuntimeException('Premature end of data while reading integer at offset 0')
+				new RuntimeException('Premature end of data')
+			],
+			[
+				'd1:xi-',
+				new RuntimeException('Premature end of data')
 			],
 			[
 				'i1',
-				new RuntimeException('Premature end of data while reading integer at offset 0')
+				new RuntimeException('Premature end of data')
 			],
 			[
 				'i-1',
-				new RuntimeException('Premature end of data while reading integer at offset 0')
+				new RuntimeException('Premature end of data')
 			],
 			[
 				'lli123',
-				new RuntimeException('Premature end of data while reading integer at offset 2')
+				new RuntimeException('Premature end of data')
 			],
 			[
 				'3 abc',
@@ -322,23 +377,27 @@ class Test extends TestCase
 			],
 			[
 				'3:',
-				new RuntimeException('Premature end of data while reading string at offset 2')
+				new RuntimeException('Premature end of data')
 			],
 			[
 				'3:a',
-				new RuntimeException('Premature end of data while reading string at offset 2')
+				new RuntimeException('Premature end of data')
 			],
 			[
 				'2:a',
-				new RuntimeException('Premature end of data while reading string at offset 2')
+				new RuntimeException('Premature end of data')
 			],
 			[
 				'l11:ae',
-				new RuntimeException('Premature end of data while reading string at offset 4')
+				new RuntimeException('Premature end of data')
 			],
 			[
 				'i0123e',
-				new RuntimeException('Illegal character found at offset 1')
+				new RuntimeException('Illegal character found at offset 2')
+			],
+			[
+				'i00e',
+				new RuntimeException('Illegal character found at offset 2')
 			],
 			[
 				'i-0e',
@@ -346,11 +405,11 @@ class Test extends TestCase
 			],
 			[
 				'01:a',
-				new RuntimeException('Illegal character found at offset 0')
+				new RuntimeException('Illegal character found at offset 1')
 			],
 			[
 				'1',
-				new RuntimeException('Premature end of data while reading string length at offset 0')
+				new RuntimeException('Premature end of data')
 			],
 			[
 				'e',
