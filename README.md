@@ -1,12 +1,16 @@
 s9e\Bencode is a simple [Bencode](http://en.wikipedia.org/wiki/Bencode) encoder/decoder. It's probably the fastest and most efficient way to read bencoded strings in PHP.
 
-[![Build Status](https://travis-ci.org/s9e/Bencode.svg)](https://travis-ci.org/s9e/Bencode)
+[![Build Status](https://api.travis-ci.org/s9e/Bencode.svg?branch=master)](https://travis-ci.org/s9e/Bencode)
+[![Code Coverage](https://scrutinizer-ci.com/g/s9e/Bencode/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/s9e/Bencode/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/s9e/Bencode/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/s9e/Bencode/?branch=master)
+
 
 ### Installation
 
 ```bash
 composer require s9e/bencode
 ```
+
 
 ### Usage
 
