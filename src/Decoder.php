@@ -138,8 +138,7 @@ class Decoder
 
 	protected function decodeDictionary(): ArrayObject
 	{
-		$dictionary = new ArrayObject;
-		$dictionary->setFlags(ArrayObject::ARRAY_AS_PROPS);
+		$values = [];
 
 		++$this->pos;
 		while ($this->pos <= $this->max)
@@ -148,12 +147,12 @@ class Decoder
 			{
 				++$this->pos;
 
-				return $dictionary;
+				return new ArrayObject($values, ArrayObject::ARRAY_AS_PROPS);
 			}
 
 			$pos = $this->pos;
 			$key = $this->decodeString();
-			if (isset($dictionary->$key))
+			if (isset($values[$key]))
 			{
 				$this->complianceError("Duplicate dictionary entry '" . $key . "' at pos " . $pos);
 			}
@@ -161,7 +160,7 @@ class Decoder
 			{
 				break;
 			}
-			$dictionary->$key = $this->decodeAnything();
+			$values[$key] = $this->decodeAnything();
 		}
 
 		throw new RuntimeException('Premature end of data');
