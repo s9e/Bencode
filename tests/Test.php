@@ -427,6 +427,10 @@ class Test extends TestCase
 				'd4:abcdi0e4:abcdli0eee',
 				new RuntimeException("Duplicate dictionary entry 'abcd' at pos 10")
 			],
+			[
+				'd3:fooi0e3:bar3:abce',
+				new RuntimeException("Out of order dictionary entry 'bar' at pos 9")
+			],
 		];
 	}
 

@@ -138,7 +138,8 @@ class Decoder
 
 	protected function decodeDictionary(): ArrayObject
 	{
-		$values = [];
+		$values  = [];
+		$lastKey = null;
 
 		++$this->pos;
 		while ($this->pos <= $this->max)
@@ -152,15 +153,16 @@ class Decoder
 
 			$pos = $this->pos;
 			$key = $this->decodeString();
-			if (isset($values[$key]))
+			if ($key <= $lastKey)
 			{
-				$this->complianceError("Duplicate dictionary entry '" . $key . "' at pos " . $pos);
+				$this->dictionaryComplianceError($pos, $key, $lastKey);
 			}
 			if ($this->pos > $this->max)
 			{
 				break;
 			}
 			$values[$key] = $this->decodeAnything();
+			$lastKey      = $key;
 		}
 
 		throw new RuntimeException('Premature end of data');
@@ -232,5 +234,17 @@ class Decoder
 		$this->pos += $len;
 
 		return $string;
+	}
+
+	protected function dictionaryComplianceError(int $pos, string $key, ?string $lastKey): void
+	{
+		if ($key === $lastKey)
+		{
+			$this->complianceError("Duplicate dictionary entry '" . $key . "' at pos " . $pos);
+		}
+		elseif ($key < $lastKey)
+		{
+			$this->complianceError("Out of order dictionary entry '" . $key . "' at pos " . $pos);
+		}
 	}
 }
