@@ -15,6 +15,7 @@ composer require s9e/bencode
 ### Usage
 
 #### Decode a bencoded string
+
 ```php
 use s9e\Bencode\Bencode;
 print_r(Bencode::decode('d3:bar4:spam3:fooi42ee'));
@@ -28,6 +29,7 @@ ArrayObject Object
 ```
 
 #### Encode a PHP value
+
 ```php
 use s9e\Bencode\Bencode;
 print_r(Bencode::encode(['foo' => 42, 'bar' => 'spam']));
