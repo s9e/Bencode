@@ -265,7 +265,7 @@ class Test extends TestCase
 			],
 			[
 				'lxe',
-				new RuntimeException('Illegal character found at offset 1')
+				new RuntimeException('Illegal character at offset 1')
 			],
 			[
 				'l',
@@ -277,19 +277,19 @@ class Test extends TestCase
 			],
 			[
 				'lee',
-				new RuntimeException('Superfluous content found at offset 2')
+				new RuntimeException('Superfluous content at offset 2')
 			],
 			[
 				'le0',
-				new RuntimeException('Superfluous content found at offset 2')
+				new RuntimeException('Superfluous content at offset 2')
 			],
 			[
 				'ddee',
-				new RuntimeException('Illegal character found at offset 1')
+				new RuntimeException('Illegal character at offset 1')
 			],
 			[
 				'd1:xe',
-				new RuntimeException('Illegal character found at offset 4')
+				new RuntimeException('Illegal character at offset 4')
 			],
 			[
 				'd1:xl',
@@ -297,23 +297,23 @@ class Test extends TestCase
 			],
 			[
 				'd1:xx',
-				new RuntimeException('Illegal character found at offset 4')
+				new RuntimeException('Illegal character at offset 4')
 			],
 			[
 				'ie',
-				new RuntimeException('Illegal character found at offset 1')
+				new RuntimeException('Illegal character at offset 1')
 			],
 			[
 				'i1x',
-				new RuntimeException('Illegal character found at offset 2')
+				new RuntimeException('Illegal character at offset 2')
 			],
 			[
 				'lxe',
-				new RuntimeException('Illegal character found at offset 1')
+				new RuntimeException('Illegal character at offset 1')
 			],
 			[
 				'3:abcd',
-				new RuntimeException('Superfluous content found at offset 5')
+				new RuntimeException('Superfluous content at offset 5')
 			],
 			[
 				'li',
@@ -325,7 +325,7 @@ class Test extends TestCase
 			],
 			[
 				'i-1-e',
-				new RuntimeException('Illegal character found at offset 3')
+				new RuntimeException('Illegal character at offset 3')
 			],
 			[
 				'i',
@@ -353,27 +353,27 @@ class Test extends TestCase
 			],
 			[
 				'3 abc',
-				new RuntimeException('Illegal character found at offset 1')
+				new RuntimeException('Illegal character at offset 1')
 			],
 			[
 				'3a3:abc',
-				new RuntimeException('Illegal character found at offset 1')
+				new RuntimeException('Illegal character at offset 1')
 			],
 			[
 				'3a',
-				new RuntimeException('Illegal character found at offset 1')
+				new RuntimeException('Illegal character at offset 1')
 			],
 			[
 				':a',
-				new RuntimeException('Illegal character found at offset 0')
+				new RuntimeException('Illegal character at offset 0')
 			],
 			[
 				'3:abc3:abc',
-				new RuntimeException('Superfluous content found at offset 5')
+				new RuntimeException('Superfluous content at offset 5')
 			],
 			[
 				'3:abci',
-				new RuntimeException('Superfluous content found at offset 5')
+				new RuntimeException('Superfluous content at offset 5')
 			],
 			[
 				'3:',
@@ -393,19 +393,19 @@ class Test extends TestCase
 			],
 			[
 				'i0123e',
-				new RuntimeException('Illegal character found at offset 2')
+				new RuntimeException('Illegal character at offset 2')
 			],
 			[
 				'i00e',
-				new RuntimeException('Illegal character found at offset 2')
+				new RuntimeException('Illegal character at offset 2')
 			],
 			[
 				'i-0e',
-				new RuntimeException('Illegal character found at offset 2')
+				new RuntimeException('Illegal character at offset 2')
 			],
 			[
 				'01:a',
-				new RuntimeException('Illegal character found at offset 1')
+				new RuntimeException('Illegal character at offset 1')
 			],
 			[
 				'1',
@@ -413,11 +413,11 @@ class Test extends TestCase
 			],
 			[
 				'e',
-				new RuntimeException('Illegal character found at offset 0')
+				new RuntimeException('Illegal character at offset 0')
 			],
 			[
 				'-1',
-				new RuntimeException('Illegal character found at offset 0')
+				new RuntimeException('Illegal character at offset 0')
 			],
 			[
 				'd3:fooi0e3:foo3:abce',

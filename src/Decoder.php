@@ -63,7 +63,7 @@ class Decoder
 		{
 			if (strpos('-e', $this->bencoded[0]) !== false)
 			{
-				throw new RuntimeException('Illegal character found at offset 0');
+				throw new RuntimeException('Illegal character at offset 0');
 			}
 
 			throw new RuntimeException('Premature end of data');
@@ -82,13 +82,13 @@ class Decoder
 				throw new RuntimeException('Premature end of data');
 			}
 
-			$this->complianceError('Superfluous content found at offset ' . $this->offset);
+			$this->complianceError($this->offset, 'Superfluous content');
 		}
 	}
 
-	protected function complianceError(string $message): void
+	protected function complianceError(int $offset, string $message = 'Illegal character'): void
 	{
-		throw new RuntimeException($message);
+		throw new RuntimeException($message . ' at offset ' . $offset);
 	}
 
 	/**
@@ -174,11 +174,11 @@ class Decoder
 		$spn = strspn($this->bencoded, '4615302879', $this->offset);
 		if (!$spn)
 		{
-			throw new RuntimeException('Illegal character found at offset ' . $this->offset);
+			throw new RuntimeException('Illegal character at offset ' . $this->offset);
 		}
 		if ($this->bencoded[$this->offset] === '0' && $spn > 1)
 		{
-			$this->complianceError('Illegal character found at offset ' . (1 + $this->offset));
+			$this->complianceError(1 + $this->offset);
 		}
 
 		// Capture the value and cast it as an integer
@@ -187,7 +187,7 @@ class Decoder
 		$this->offset += $spn;
 		if ($this->bencoded[$this->offset] !== $terminator)
 		{
-			throw new RuntimeException('Illegal character found at offset ' . $this->offset);
+			throw new RuntimeException('Illegal character at offset ' . $this->offset);
 		}
 		++$this->offset;
 
@@ -199,7 +199,7 @@ class Decoder
 		$negative = ($this->bencoded[++$this->offset] === '-');
 		if ($negative && $this->bencoded[++$this->offset] === '0')
 		{
-			$this->complianceError('Illegal character found at offset ' . $this->offset);
+			$this->complianceError($this->offset);
 		}
 
 		$value = $this->decodeDigits('e');
@@ -240,11 +240,11 @@ class Decoder
 	{
 		if ($key === $lastKey)
 		{
-			$this->complianceError("Duplicate dictionary entry '" . $key . "' at offset " . $offset);
+			$this->complianceError($offset, "Duplicate dictionary entry '" . $key . "'");
 		}
 		elseif ($key < $lastKey)
 		{
-			$this->complianceError("Out of order dictionary entry '" . $key . "' at offset " . $offset);
+			$this->complianceError($offset, "Out of order dictionary entry '" . $key . "'");
 		}
 	}
 }
