@@ -16,12 +16,12 @@ class Encoder
 	public static function encode($value): string
 	{
 		$callback = get_called_class() . '::encode' . ucfirst(gettype($value));
-		if (!is_callable($callback))
+		if (is_callable($callback))
 		{
-			throw new InvalidArgumentException('Unsupported value');
+			return $callback($value);
 		}
 
-		return $callback($value);
+		throw new InvalidArgumentException('Unsupported xvalue');
 	}
 
 	/**

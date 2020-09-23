@@ -18,10 +18,19 @@ class Test extends TestCase
 		Bencode::decode('i1e');
 	}
 
-	public function testUnsupported()
+	public function testUnsupportedClass()
 	{
 		$this->expectException('InvalidArgumentException');
 		Bencode::encode(function(){});
+	}
+
+	public function testUnsupportedType()
+	{
+		$fp = fopen('php://stdin', 'rb');
+		fclose($fp);
+
+		$this->expectException('InvalidArgumentException');
+		Bencode::encode($fp);
 	}
 
 	/**
