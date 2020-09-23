@@ -15,24 +15,13 @@ class Encoder
 {
 	public static function encode($value): string
 	{
-		if (is_scalar($value))
+		$callback = get_called_class() . '::encode' . ucfirst(gettype($value));
+		if (!is_callable($callback))
 		{
-			return self::encodeScalar($value);
-		}
-		if (is_array($value))
-		{
-			return self::encodeArray($value);
-		}
-		if ($value instanceof stdClass)
-		{
-			$value = new ArrayObject(get_object_vars($value));
-		}
-		if ($value instanceof ArrayObject)
-		{
-			return self::encodeArrayObject($value);
+			throw new InvalidArgumentException('Unsupported value');
 		}
 
-		throw new InvalidArgumentException('Unsupported value');
+		return $callback($value);
 	}
 
 	/**
@@ -47,11 +36,11 @@ class Encoder
 
 		if (array_keys($value) === range(0, count($value) - 1))
 		{
-			return 'l' . implode('', array_map([__CLASS__, 'encode'], $value)) . 'e';
+			return 'l' . implode('', array_map(get_called_class() . '::encode', $value)) . 'e';
 		}
 
 		// Encode associative arrays as dictionaries
-		return self::encodeArrayObject(new ArrayObject($value));
+		return static::encodeArrayObject(new ArrayObject($value));
 	}
 
 	/**
@@ -65,27 +54,45 @@ class Encoder
 		$str = 'd';
 		foreach ($vars as $k => $v)
 		{
-			$str .= strlen($k) . ':' . $k . self::encode($v);
+			$str .= strlen($k) . ':' . $k . static::encode($v);
 		}
 		$str .= 'e';
 
 		return $str;
 	}
 
-	/**
-	* Encode a scalar value
-	*/
-	protected static function encodeScalar($value): string
+	protected static function encodeObject(object $value): string
 	{
-		if (is_int($value) || is_float($value))
+		if ($value instanceof stdClass)
 		{
-			return sprintf('i%de', round($value));
-		}
-		if (is_bool($value))
-		{
-			return ($value) ? 'i1e' : 'i0e';
+			$value = new ArrayObject(get_object_vars($value));
 		}
 
+		if ($value instanceof ArrayObject)
+		{
+			return static::encodeArrayObject($value);
+		}
+
+		throw new InvalidArgumentException('Unsupported value');
+	}
+
+	protected static function encodeBoolean(bool $value): string
+	{
+		return static::encodeInteger((int) $value);
+	}
+
+	protected static function encodeDouble(float $value): string
+	{
+		return static::encodeInteger((int) $value);
+	}
+
+	protected static function encodeInteger(int $value): string
+	{
+		return sprintf('i%de', round($value));
+	}
+
+	protected static function encodeString(string $value): string
+	{
 		return strlen($value) . ':' . $value;
 	}
 }
