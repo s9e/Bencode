@@ -31,7 +31,7 @@ class Decoder
 	/**
 	* @var int Position of the cursor while decoding
 	*/
-	protected int $pos;
+	protected int $offset;
 
 	public static function decode(string $bencoded)
 	{
@@ -52,7 +52,7 @@ class Decoder
 
 		$this->bencoded = $bencoded;
 		$this->len      = strlen($bencoded);
-		$this->pos      = 0;
+		$this->offset   = 0;
 
 		$this->computeSafeBoundary();
 	}
@@ -75,14 +75,14 @@ class Decoder
 	*/
 	protected function checkCursorPosition(): void
 	{
-		if ($this->pos !== $this->len)
+		if ($this->offset !== $this->len)
 		{
-			if ($this->pos > $this->len)
+			if ($this->offset > $this->len)
 			{
 				throw new RuntimeException('Premature end of data');
 			}
 
-			$this->complianceError('Superfluous content found at offset ' . $this->pos);
+			$this->complianceError('Superfluous content found at offset ' . $this->offset);
 		}
 	}
 
@@ -119,7 +119,7 @@ class Decoder
 
 	protected function decodeAnything()
 	{
-		$c = $this->bencoded[$this->pos];
+		$c = $this->bencoded[$this->offset];
 		if ($c === 'i')
 		{
 			return $this->decodeInteger();
@@ -141,23 +141,23 @@ class Decoder
 		$values  = [];
 		$lastKey = null;
 
-		++$this->pos;
-		while ($this->pos <= $this->max)
+		++$this->offset;
+		while ($this->offset <= $this->max)
 		{
-			if ($this->bencoded[$this->pos] === 'e')
+			if ($this->bencoded[$this->offset] === 'e')
 			{
-				++$this->pos;
+				++$this->offset;
 
 				return new ArrayObject($values, ArrayObject::ARRAY_AS_PROPS);
 			}
 
-			$pos = $this->pos;
-			$key = $this->decodeString();
+			$offset = $this->offset;
+			$key    = $this->decodeString();
 			if ($key <= $lastKey)
 			{
-				$this->dictionaryComplianceError($pos, $key, $lastKey);
+				$this->dictionaryComplianceError($offset, $key, $lastKey);
 			}
-			if ($this->pos > $this->max)
+			if ($this->offset > $this->max)
 			{
 				break;
 			}
@@ -171,35 +171,35 @@ class Decoder
 	protected function decodeDigits(string $terminator): int
 	{
 		// Digits sorted by decreasing frequency as observed on a random sample of torrent files
-		$spn = strspn($this->bencoded, '4615302879', $this->pos);
+		$spn = strspn($this->bencoded, '4615302879', $this->offset);
 		if (!$spn)
 		{
-			throw new RuntimeException('Illegal character found at offset ' . $this->pos);
+			throw new RuntimeException('Illegal character found at offset ' . $this->offset);
 		}
-		if ($this->bencoded[$this->pos] === '0' && $spn > 1)
+		if ($this->bencoded[$this->offset] === '0' && $spn > 1)
 		{
-			$this->complianceError('Illegal character found at offset ' . (1 + $this->pos));
+			$this->complianceError('Illegal character found at offset ' . (1 + $this->offset));
 		}
 
 		// Capture the value and cast it as an integer
-		$value = (int) substr($this->bencoded, $this->pos, $spn);
+		$value = (int) substr($this->bencoded, $this->offset, $spn);
 
-		$this->pos += $spn;
-		if ($this->bencoded[$this->pos] !== $terminator)
+		$this->offset += $spn;
+		if ($this->bencoded[$this->offset] !== $terminator)
 		{
-			throw new RuntimeException('Illegal character found at offset ' . $this->pos);
+			throw new RuntimeException('Illegal character found at offset ' . $this->offset);
 		}
-		++$this->pos;
+		++$this->offset;
 
 		return $value;
 	}
 
 	protected function decodeInteger(): int
 	{
-		$negative = ($this->bencoded[++$this->pos] === '-');
-		if ($negative && $this->bencoded[++$this->pos] === '0')
+		$negative = ($this->bencoded[++$this->offset] === '-');
+		if ($negative && $this->bencoded[++$this->offset] === '0')
 		{
-			$this->complianceError('Illegal character found at offset ' . $this->pos);
+			$this->complianceError('Illegal character found at offset ' . $this->offset);
 		}
 
 		$value = $this->decodeDigits('e');
@@ -209,14 +209,14 @@ class Decoder
 
 	protected function decodeList(): array
 	{
-		++$this->pos;
+		++$this->offset;
 
 		$list = [];
-		while ($this->pos <= $this->max)
+		while ($this->offset <= $this->max)
 		{
-			if ($this->bencoded[$this->pos] === 'e')
+			if ($this->bencoded[$this->offset] === 'e')
 			{
-				++$this->pos;
+				++$this->offset;
 
 				return $list;
 			}
@@ -229,22 +229,22 @@ class Decoder
 
 	protected function decodeString(): string
 	{
-		$len        = $this->decodeDigits(':');
-		$string     = substr($this->bencoded, $this->pos, $len);
-		$this->pos += $len;
+		$len           = $this->decodeDigits(':');
+		$string        = substr($this->bencoded, $this->offset, $len);
+		$this->offset += $len;
 
 		return $string;
 	}
 
-	protected function dictionaryComplianceError(int $pos, string $key, ?string $lastKey): void
+	protected function dictionaryComplianceError(int $offset, string $key, ?string $lastKey): void
 	{
 		if ($key === $lastKey)
 		{
-			$this->complianceError("Duplicate dictionary entry '" . $key . "' at pos " . $pos);
+			$this->complianceError("Duplicate dictionary entry '" . $key . "' at offset " . $offset);
 		}
 		elseif ($key < $lastKey)
 		{
-			$this->complianceError("Out of order dictionary entry '" . $key . "' at pos " . $pos);
+			$this->complianceError("Out of order dictionary entry '" . $key . "' at offset " . $offset);
 		}
 	}
 }

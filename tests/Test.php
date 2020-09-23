@@ -421,15 +421,15 @@ class Test extends TestCase
 			],
 			[
 				'd3:fooi0e3:foo3:abce',
-				new RuntimeException("Duplicate dictionary entry 'foo' at pos 9")
+				new RuntimeException("Duplicate dictionary entry 'foo' at offset 9")
 			],
 			[
 				'd4:abcdi0e4:abcdli0eee',
-				new RuntimeException("Duplicate dictionary entry 'abcd' at pos 10")
+				new RuntimeException("Duplicate dictionary entry 'abcd' at offset 10")
 			],
 			[
 				'd3:fooi0e3:bar3:abce',
-				new RuntimeException("Out of order dictionary entry 'bar' at pos 9")
+				new RuntimeException("Out of order dictionary entry 'bar' at offset 9")
 			],
 		];
 	}
