@@ -21,7 +21,7 @@ class Encoder
 			return $callback($value);
 		}
 
-		throw new InvalidArgumentException('Unsupported xvalue');
+		throw new InvalidArgumentException('Unsupported value');
 	}
 
 	/**
@@ -40,13 +40,20 @@ class Encoder
 		}
 
 		// Encode associative arrays as dictionaries
-		return static::encodeArrayObject(new ArrayObject($value));
+		return static::encodeInstanceOfArrayObject(new ArrayObject($value));
 	}
 
-	/**
-	* Encode given ArrayObject instance into a dictionary
-	*/
-	protected static function encodeArrayObject(ArrayObject $dict): string
+	protected static function encodeBoolean(bool $value): string
+	{
+		return static::encodeInteger((int) $value);
+	}
+
+	protected static function encodeDouble(float $value): string
+	{
+		return static::encodeInteger((int) $value);
+	}
+
+	protected static function encodeInstanceOfArrayObject(ArrayObject $dict): string
 	{
 		$vars = $dict->getArrayCopy();
 		ksort($vars);
@@ -61,34 +68,26 @@ class Encoder
 		return $str;
 	}
 
-	protected static function encodeObject(object $value): string
+	protected static function encodeInstanceOfStdClass(stdClass $value): string
 	{
-		if ($value instanceof stdClass)
-		{
-			$value = new ArrayObject(get_object_vars($value));
-		}
-
-		if ($value instanceof ArrayObject)
-		{
-			return static::encodeArrayObject($value);
-		}
-
-		throw new InvalidArgumentException('Unsupported value');
-	}
-
-	protected static function encodeBoolean(bool $value): string
-	{
-		return static::encodeInteger((int) $value);
-	}
-
-	protected static function encodeDouble(float $value): string
-	{
-		return static::encodeInteger((int) $value);
+		return static::encodeInstanceOfArrayObject(new ArrayObject(get_object_vars($value)));
 	}
 
 	protected static function encodeInteger(int $value): string
 	{
 		return sprintf('i%de', round($value));
+	}
+
+	protected static function encodeObject(object $value): string
+	{
+		$methodName = 'encodeInstanceOf' . str_replace('\\', '', ucwords(get_class($value), '\\'));
+		$callback   = get_called_class() . '::' . $methodName;
+		if (is_callable($callback))
+		{
+			return $callback($value);
+		}
+
+		throw new InvalidArgumentException('Unsupported value');
 	}
 
 	protected static function encodeString(string $value): string
