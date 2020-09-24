@@ -24,6 +24,12 @@ class Test extends TestCase
 		Bencode::encode(function(){});
 	}
 
+	public function testUnsupportedFloat()
+	{
+		$this->expectException('InvalidArgumentException');
+		Bencode::encode(1.2);
+	}
+
 	public function testUnsupportedType()
 	{
 		$fp = fopen('php://stdin', 'rb');
@@ -114,7 +120,7 @@ class Test extends TestCase
 			],
 			[
 				'i22e',
-				(double) 22
+				(double) 22.0
 			],
 			[
 				'i1e',

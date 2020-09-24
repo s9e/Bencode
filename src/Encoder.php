@@ -50,7 +50,13 @@ class Encoder
 
 	protected static function encodeDouble(float $value): string
 	{
-		return static::encodeInteger((int) $value);
+		$int = (int) $value;
+		if ((float) $int !== $value)
+		{
+			throw new InvalidArgumentException('Unsupported value');
+		}
+
+		return static::encodeInteger($int);
 	}
 
 	protected static function encodeInstanceOfArrayObject(ArrayObject $dict): string

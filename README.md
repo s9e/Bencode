@@ -42,4 +42,5 @@ d3:bar4:spam3:fooi42ee
 
  - Rejects invalid bencoded data with meaningful exception messages.
  - Uses [ArrayObject](https://www.php.net/manual/en/class.arrayobject.php) instances to represent dictionaries. Dictionaries can be created and read using either the array notation or the object notation.
- - The encoder accepts floats and booleans but converts them to integers.
+ - The encoder accepts booleans but converts them to integers.
+ - The encoder accepts floats that are equal to their integer value.
