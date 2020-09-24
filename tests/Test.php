@@ -61,7 +61,7 @@ class Test extends TestCase
 		$before = memory_get_peak_usage();
 		if ($before === $reference)
 		{
-			$this->markTestSkipped('Cannot measure peak memory before the reference value is too high');
+			$this->markTestSkipped('Cannot measure peak memory because the reference value is too high');
 		}
 
 		$decoded = Bencode::decode($str);
@@ -90,7 +90,7 @@ class Test extends TestCase
 		$before = memory_get_peak_usage();
 		if ($before === $reference)
 		{
-			$this->markTestSkipped('Cannot measure peak memory before the reference value is too high');
+			$this->markTestSkipped('Cannot measure peak memory because the reference value is too high');
 		}
 
 		$decoded  = Bencode::decode($str);
