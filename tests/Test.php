@@ -18,27 +18,6 @@ class Test extends TestCase
 		Bencode::decode('i1e');
 	}
 
-	public function testUnsupportedClass()
-	{
-		$this->expectException('InvalidArgumentException');
-		Bencode::encode(function(){});
-	}
-
-	public function testUnsupportedFloat()
-	{
-		$this->expectException('InvalidArgumentException');
-		Bencode::encode(1.2);
-	}
-
-	public function testUnsupportedType()
-	{
-		$fp = fopen('php://stdin', 'rb');
-		fclose($fp);
-
-		$this->expectException('InvalidArgumentException');
-		Bencode::encode($fp);
-	}
-
 	/**
 	* @group memory
 	*/
@@ -168,6 +147,37 @@ class Test extends TestCase
 					'foo' => new ArrayObject(['bar' => 1]),
 					'x'   => new ArrayObject(['y' => 1])
 				])
+			],
+		];
+	}
+
+	/**
+	* @dataProvider getEncodeInvalidTests
+	*/
+	public function testEncodeInvalid($input, $expected)
+	{
+		$this->expectException(get_class($expected));
+		$this->expectExceptionMessage($expected->getMessage());
+		$this->assertNull(Bencode::encode($input));
+	}
+
+	public function getEncodeInvalidTests()
+	{
+		$fp = fopen('php://stdin', 'rb');
+		fclose($fp);
+
+		return [
+			[
+				function(){},
+				new InvalidArgumentException('Unsupported value')
+			],
+			[
+				1.2,
+				new InvalidArgumentException('Unsupported value')
+			],
+			[
+				$fp,
+				new InvalidArgumentException('Unsupported value')
 			],
 		];
 	}
