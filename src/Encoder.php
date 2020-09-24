@@ -25,7 +25,7 @@ class Encoder
 	}
 
 	/**
-	* Encode an array into either an array of a dictionary
+	* Encode a PHP array into either an array of a dictionary
 	*/
 	protected static function encodeArray(array $value): string
 	{
