@@ -43,6 +43,20 @@ class Encoder
 		return static::encodeInstanceOfArrayObject(new ArrayObject($value));
 	}
 
+	protected static function encodeAssociativeArray(array $array): string
+	{
+		ksort($array);
+
+		$str = 'd';
+		foreach ($array as $k => $v)
+		{
+			$str .= strlen($k) . ':' . $k . static::encode($v);
+		}
+		$str .= 'e';
+
+		return $str;
+	}
+
 	protected static function encodeBoolean(bool $value): string
 	{
 		return static::encodeInteger((int) $value);
@@ -61,22 +75,12 @@ class Encoder
 
 	protected static function encodeInstanceOfArrayObject(ArrayObject $dict): string
 	{
-		$vars = $dict->getArrayCopy();
-		ksort($vars);
-
-		$str = 'd';
-		foreach ($vars as $k => $v)
-		{
-			$str .= strlen($k) . ':' . $k . static::encode($v);
-		}
-		$str .= 'e';
-
-		return $str;
+		return static::encodeAssociativeArray($dict->getArrayCopy());
 	}
 
 	protected static function encodeInstanceOfStdClass(stdClass $value): string
 	{
-		return static::encodeInstanceOfArrayObject(new ArrayObject(get_object_vars($value)));
+		return static::encodeAssociativeArray(get_object_vars($value));
 	}
 
 	protected static function encodeInteger(int $value): string
