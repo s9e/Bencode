@@ -23,15 +23,13 @@ class Test extends TestCase
 	*/
 	public function testMemoryList()
 	{
-		$reference = memory_get_peak_usage();
-
 		$len = 10000;
 		$str = str_repeat('i0e', $len + 2);
-		for ($i = 0; $i < 3; ++$i)
-		{
-			$str[$i]      = 'l';
-			$str[-3 + $i] = 'e';
-		}
+
+		$str[0]  = $str[1]  = $str[2]  = 'l';
+		$str[-1] = $str[-2] = $str[-3] = 'e';
+
+		$reference = memory_get_peak_usage();
 
 		// Create a copy of the expected result so we get a feel for how much memory it will use
 		$expected = array_fill(0, $len, 0);
@@ -47,8 +45,8 @@ class Test extends TestCase
 		$after   = memory_get_peak_usage();
 		$delta   = $after - $before;
 
-		// Test that the delta is less than ~4 KB
-		$this->assertLessThan(4000, $delta);
+		// Test that the delta is less than 4 KB
+		$this->assertLessThan(4096, $delta);
 	}
 
 	/**
@@ -77,8 +75,8 @@ class Test extends TestCase
 		$delta    = $after - $before;
 		$overhead = $delta - $len;
 
-		// Test that the overhead was less than ~30 KB
-		$this->assertLessThan(30e3, $overhead);
+		// Test that the overhead was less than 4 KB
+		$this->assertLessThan(4096, $overhead);
 		$this->assertEquals($len, strlen($decoded));
 	}
 
