@@ -1,4 +1,4 @@
-s9e\Bencode is a simple [Bencode](http://en.wikipedia.org/wiki/Bencode) encoder/decoder. It's probably the fastest and most efficient way to read bencoded strings in PHP.
+s9e\Bencode is a clean and efficient [Bencode](http://en.wikipedia.org/wiki/Bencode) encoder/decoder.
 
 [![Build Status](https://api.travis-ci.org/s9e/Bencode.svg?branch=master)](https://travis-ci.org/s9e/Bencode)
 [![Code Coverage](https://scrutinizer-ci.com/g/s9e/Bencode/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/s9e/Bencode/?branch=master)
