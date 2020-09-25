@@ -3,11 +3,12 @@
 namespace s9e\Bencode\Tests;
 
 use ArrayObject;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use TypeError;
 use s9e\Bencode\Bencode;
+use s9e\Bencode\Exceptions\ComplianceError;
+use s9e\Bencode\Exceptions\DecodingException;
+use s9e\Bencode\Exceptions\EncodingException;
 use stdClass;
 
 class Test extends TestCase
@@ -152,11 +153,21 @@ class Test extends TestCase
 	/**
 	* @dataProvider getEncodeInvalidTests
 	*/
-	public function testEncodeInvalid($input, $expected)
+	public function testEncodeInvalid($input)
 	{
-		$this->expectException(get_class($expected));
-		$this->expectExceptionMessage($expected->getMessage());
-		$this->assertNull(Bencode::encode($input));
+		$this->expectException(EncodingException::class);
+		$this->expectExceptionMessage('Unsupported value');
+
+		try
+		{
+			$this->assertNull(Bencode::encode($input));
+		}
+		catch (EncodingException $e)
+		{
+			$this->assertSame($input, $e->getValue());
+
+			throw $e;
+		}
 	}
 
 	public function getEncodeInvalidTests()
@@ -165,18 +176,9 @@ class Test extends TestCase
 		fclose($fp);
 
 		return [
-			[
-				function(){},
-				new InvalidArgumentException('Unsupported value')
-			],
-			[
-				1.2,
-				new InvalidArgumentException('Unsupported value')
-			],
-			[
-				$fp,
-				new InvalidArgumentException('Unsupported value')
-			],
+			[function(){}],
+			[1.2],
+			[$fp],
 		];
 	}
 
@@ -272,7 +274,16 @@ class Test extends TestCase
 	{
 		$this->expectException(get_class($expected));
 		$this->expectExceptionMessage($expected->getMessage());
-		$this->assertNull(Bencode::decode($input));
+
+		try
+		{
+			$this->assertNull(Bencode::decode($input));
+		}
+		catch (DecodingException $e)
+		{
+			$this->assertEquals($expected->getOffset(), $e->getOffset());
+			throw $e;
+		}
 	}
 
 	public function getDecodeInvalidTests()
@@ -284,175 +295,175 @@ class Test extends TestCase
 			],
 			[
 				'',
-				new InvalidArgumentException
+				new DecodingException('Premature end of data', 0)
 			],
 			[
 				'lxe',
-				new RuntimeException('Illegal character at offset 1')
+				new DecodingException('Illegal character', 1)
 			],
 			[
 				'l',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 0)
 			],
 			[
 				'lle',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 2)
 			],
 			[
 				'lee',
-				new RuntimeException('Superfluous content at offset 2')
+				new ComplianceError('Superfluous content', 2)
 			],
 			[
 				'le0',
-				new RuntimeException('Superfluous content at offset 2')
+				new ComplianceError('Superfluous content', 2)
 			],
 			[
 				'ddee',
-				new RuntimeException('Illegal character at offset 1')
+				new DecodingException('Illegal character', 1)
 			],
 			[
 				'd1:xe',
-				new RuntimeException('Illegal character at offset 4')
+				new DecodingException('Illegal character', 4)
 			],
 			[
 				'd1:xl',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 4)
 			],
 			[
 				'd1:xx',
-				new RuntimeException('Illegal character at offset 4')
+				new DecodingException('Illegal character', 4)
 			],
 			[
 				'ie',
-				new RuntimeException('Illegal character at offset 1')
+				new DecodingException('Illegal character', 1)
 			],
 			[
 				'i1x',
-				new RuntimeException('Illegal character at offset 2')
+				new DecodingException('Illegal character', 2)
 			],
 			[
 				'lxe',
-				new RuntimeException('Illegal character at offset 1')
+				new DecodingException('Illegal character', 1)
 			],
 			[
 				'3:abcd',
-				new RuntimeException('Superfluous content at offset 5')
+				new ComplianceError('Superfluous content', 5)
 			],
 			[
 				'li',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 1)
 			],
 			[
 				'l3',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 1)
 			],
 			[
 				'i-1-e',
-				new RuntimeException('Illegal character at offset 3')
+				new DecodingException('Illegal character', 3)
 			],
 			[
 				'i',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 0)
 			],
 			[
 				'i-',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 1)
 			],
 			[
 				'd1:xi-',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 5)
 			],
 			[
 				'i1',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 1)
 			],
 			[
 				'i-1',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 2)
 			],
 			[
 				'lli123',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 5)
 			],
 			[
 				'3 abc',
-				new RuntimeException('Illegal character at offset 1')
+				new DecodingException('Illegal character', 1)
 			],
 			[
 				'3a3:abc',
-				new RuntimeException('Illegal character at offset 1')
+				new DecodingException('Illegal character', 1)
 			],
 			[
 				'3a',
-				new RuntimeException('Illegal character at offset 1')
+				new DecodingException('Illegal character', 1)
 			],
 			[
 				':a',
-				new RuntimeException('Illegal character at offset 0')
+				new DecodingException('Illegal character', 0)
 			],
 			[
 				'3:abc3:abc',
-				new RuntimeException('Superfluous content at offset 5')
+				new ComplianceError('Superfluous content', 5)
 			],
 			[
 				'3:abci',
-				new RuntimeException('Superfluous content at offset 5')
+				new ComplianceError('Superfluous content', 5)
 			],
 			[
 				'3:',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 1)
 			],
 			[
 				'3:a',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 2)
 			],
 			[
 				'2:a',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 2)
 			],
 			[
 				'l11:ae',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 5)
 			],
 			[
 				'i0123e',
-				new RuntimeException('Illegal character at offset 2')
+				new ComplianceError('Illegal character', 2)
 			],
 			[
 				'i00e',
-				new RuntimeException('Illegal character at offset 2')
+				new ComplianceError('Illegal character', 2)
 			],
 			[
 				'i-0e',
-				new RuntimeException('Illegal character at offset 2')
+				new ComplianceError('Illegal character', 2)
 			],
 			[
 				'01:a',
-				new RuntimeException('Illegal character at offset 1')
+				new ComplianceError('Illegal character', 1)
 			],
 			[
 				'1',
-				new RuntimeException('Premature end of data')
+				new DecodingException('Premature end of data', 0)
 			],
 			[
 				'e',
-				new RuntimeException('Illegal character at offset 0')
+				new DecodingException('Illegal character', 0)
 			],
 			[
 				'-1',
-				new RuntimeException('Illegal character at offset 0')
+				new DecodingException('Illegal character', 0)
 			],
 			[
 				'd3:fooi0e3:foo3:abce',
-				new RuntimeException("Duplicate dictionary entry 'foo' at offset 9")
+				new ComplianceError("Duplicate dictionary entry 'foo'", 9)
 			],
 			[
 				'd4:abcdi0e4:abcdli0eee',
-				new RuntimeException("Duplicate dictionary entry 'abcd' at offset 10")
+				new ComplianceError("Duplicate dictionary entry 'abcd'", 10)
 			],
 			[
 				'd3:fooi0e3:bar3:abce',
-				new RuntimeException("Out of order dictionary entry 'bar' at offset 9")
+				new ComplianceError("Out of order dictionary entry 'bar'", 9)
 			],
 		];
 	}

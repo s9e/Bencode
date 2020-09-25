@@ -8,7 +8,7 @@
 namespace s9e\Bencode;
 
 use ArrayObject;
-use InvalidArgumentException;
+use s9e\Bencode\Exceptions\EncodingException;
 use stdClass;
 
 class Encoder
@@ -21,7 +21,7 @@ class Encoder
 			return $callback($value);
 		}
 
-		throw new InvalidArgumentException('Unsupported value');
+		throw new EncodingException('Unsupported value', $value);
 	}
 
 	/**
@@ -67,7 +67,7 @@ class Encoder
 		$int = (int) $value;
 		if ((float) $int !== $value)
 		{
-			throw new InvalidArgumentException('Unsupported value');
+			throw new EncodingException('Unsupported value', $value);
 		}
 
 		return static::encodeInteger($int);
@@ -97,7 +97,7 @@ class Encoder
 			return $callback($value);
 		}
 
-		throw new InvalidArgumentException('Unsupported value');
+		throw new EncodingException('Unsupported value', $value);
 	}
 
 	protected static function encodeString(string $value): string

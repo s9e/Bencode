@@ -38,6 +38,38 @@ print_r(Bencode::encode(['foo' => 42, 'bar' => 'spam']));
 d3:bar4:spam3:fooi42ee
 ```
 
+#### Handle exceptions
+
+```php
+try
+{
+	s9e\Bencode\Bencode::decode('i123x');
+}
+catch (s9e\Bencode\Exceptions\DecodingException $e)
+{
+	var_dump($e->getMessage(), $e->getOffset());
+}
+```
+```
+string(29) "Illegal character at offset 4"
+int(4)
+```
+
+```php
+try
+{
+	s9e\Bencode\Bencode::encode(2.5);
+}
+catch (s9e\Bencode\Exceptions\EncodingException $e)
+{
+	var_dump($e->getMessage(), $e->getValue());
+}
+```
+```
+string(17) "Unsupported value"
+float(2.5)
+```
+
 ### Implementation details
 
  - Rejects invalid bencoded data with meaningful exception messages.

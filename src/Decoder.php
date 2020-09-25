@@ -8,8 +8,8 @@
 namespace s9e\Bencode;
 
 use ArrayObject;
-use InvalidArgumentException;
-use RuntimeException;
+use s9e\Bencode\Exceptions\ComplianceError;
+use s9e\Bencode\Exceptions\DecodingException;
 
 class Decoder
 {
@@ -45,15 +45,14 @@ class Decoder
 
 	protected function __construct(string $bencoded)
 	{
-		if ($bencoded === '')
-		{
-			throw new InvalidArgumentException;
-		}
-
 		$this->bencoded = $bencoded;
 		$this->len      = strlen($bencoded);
 		$this->offset   = 0;
 
+		if ($bencoded === '')
+		{
+			throw new DecodingException('Premature end of data', 0);
+		}
 		$this->computeSafeBoundary();
 	}
 
@@ -63,10 +62,10 @@ class Decoder
 		{
 			if (strpos('-e', $this->bencoded[0]) !== false)
 			{
-				throw new RuntimeException('Illegal character at offset 0');
+				throw new DecodingException('Illegal character', 0);
 			}
 
-			throw new RuntimeException('Premature end of data');
+			throw new DecodingException('Premature end of data', $this->len - 1);
 		}
 	}
 
@@ -79,16 +78,16 @@ class Decoder
 		{
 			if ($this->offset > $this->len)
 			{
-				throw new RuntimeException('Premature end of data');
+				throw new DecodingException('Premature end of data', $this->len - 1);
 			}
 
-			$this->complianceError($this->offset, 'Superfluous content');
+			$this->complianceError('Superfluous content', $this->offset);
 		}
 	}
 
-	protected function complianceError(int $offset, string $message = 'Illegal character'): void
+	protected function complianceError(string $message, int $offset): void
 	{
-		throw new RuntimeException($message . ' at offset ' . $offset);
+		throw new ComplianceError($message, $offset);
 	}
 
 	/**
@@ -165,7 +164,7 @@ class Decoder
 			$lastKey      = $key;
 		}
 
-		throw new RuntimeException('Premature end of data');
+		throw new DecodingException('Premature end of data', $this->len - 1);
 	}
 
 	protected function decodeDigits(string $terminator): int
@@ -174,11 +173,11 @@ class Decoder
 		$spn = strspn($this->bencoded, '4615302879', $this->offset);
 		if (!$spn)
 		{
-			throw new RuntimeException('Illegal character at offset ' . $this->offset);
+			throw new DecodingException('Illegal character', $this->offset);
 		}
 		if ($this->bencoded[$this->offset] === '0' && $spn > 1)
 		{
-			$this->complianceError(1 + $this->offset);
+			$this->complianceError('Illegal character', 1 + $this->offset);
 		}
 
 		// Capture the value and cast it as an integer
@@ -187,7 +186,7 @@ class Decoder
 		$this->offset += $spn;
 		if ($this->bencoded[$this->offset] !== $terminator)
 		{
-			throw new RuntimeException('Illegal character at offset ' . $this->offset);
+			throw new DecodingException('Illegal character', $this->offset);
 		}
 		++$this->offset;
 
@@ -199,7 +198,7 @@ class Decoder
 		$negative = ($this->bencoded[++$this->offset] === '-');
 		if ($negative && $this->bencoded[++$this->offset] === '0')
 		{
-			$this->complianceError($this->offset);
+			$this->complianceError('Illegal character', $this->offset);
 		}
 
 		$value = $this->decodeDigits('e');
@@ -224,7 +223,7 @@ class Decoder
 			$list[] = $this->decodeAnything();
 		}
 
-		throw new RuntimeException('Premature end of data');
+		throw new DecodingException('Premature end of data', $this->len - 1);
 	}
 
 	protected function decodeString(): string
@@ -240,11 +239,11 @@ class Decoder
 	{
 		if ($key === $lastKey)
 		{
-			$this->complianceError($offset, "Duplicate dictionary entry '" . $key . "'");
+			$this->complianceError("Duplicate dictionary entry '" . $key . "'", $offset);
 		}
 		elseif ($key < $lastKey)
 		{
-			$this->complianceError($offset, "Out of order dictionary entry '" . $key . "'");
+			$this->complianceError("Out of order dictionary entry '" . $key . "'", $offset);
 		}
 	}
 }
