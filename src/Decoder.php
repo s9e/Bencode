@@ -85,6 +85,18 @@ class Decoder
 		}
 	}
 
+	protected function checkDictionaryCompliance(int $offset, string $key, ?string $lastKey): void
+	{
+		if ($key === $lastKey)
+		{
+			$this->complianceError("Duplicate dictionary entry '" . $key . "'", $offset);
+		}
+		elseif ($key < $lastKey)
+		{
+			$this->complianceError("Out of order dictionary entry '" . $key . "'", $offset);
+		}
+	}
+
 	protected function complianceError(string $message, int $offset): void
 	{
 		throw new ComplianceError($message, $offset);
@@ -154,7 +166,7 @@ class Decoder
 			$key    = $this->decodeString();
 			if ($key <= $lastKey)
 			{
-				$this->dictionaryComplianceError($offset, $key, $lastKey);
+				$this->checkDictionaryCompliance($offset, $key, $lastKey);
 			}
 			if ($this->offset > $this->max)
 			{
@@ -233,17 +245,5 @@ class Decoder
 		$this->offset += $len;
 
 		return $string;
-	}
-
-	protected function dictionaryComplianceError(int $offset, string $key, ?string $lastKey): void
-	{
-		if ($key === $lastKey)
-		{
-			$this->complianceError("Duplicate dictionary entry '" . $key . "'", $offset);
-		}
-		elseif ($key < $lastKey)
-		{
-			$this->complianceError("Out of order dictionary entry '" . $key . "'", $offset);
-		}
 	}
 }
