@@ -121,6 +121,10 @@ class Test extends TestCase
 				new stdClass
 			],
 			[
+				'de',
+				new foo
+			],
+			[
 				'd3:fooi1ee',
 				['foo' => 1]
 			],
@@ -482,4 +486,8 @@ class Test extends TestCase
 		}
 		$this->assertSame(['bar' => 'spam', 'foo' => 42], $actual);
 	}
+}
+
+class foo extends stdClass
+{
 }

@@ -90,11 +90,13 @@ class Encoder
 
 	protected static function encodeObject(object $value): string
 	{
-		$methodName = 'encodeInstanceOf' . str_replace('\\', '', ucwords(get_class($value), '\\'));
-		$callback   = get_called_class() . '::' . $methodName;
-		if (is_callable($callback))
+		if ($value instanceof ArrayObject)
 		{
-			return $callback($value);
+			return static::encodeInstanceOfArrayObject($value);
+		}
+		if ($value instanceof stdClass)
+		{
+			return static::encodeInstanceOfStdClass($value);
 		}
 
 		throw new EncodingException('Unsupported value', $value);
