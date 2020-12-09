@@ -295,7 +295,9 @@ class Test extends TestCase
 		return [
 			[
 				null,
-				new TypeError('Argument 1 passed to ' . Bencode::class . '::decode() must be of the type string')
+				new TypeError((version_compare(PHP_VERSION, '8.0.0', '<'))
+				? 'Argument 1 passed to ' . Bencode::class . '::decode() must be of the type string'
+				: Bencode::class . '::decode(): Argument #1 ($bencoded) must be of type string, null given')
 			],
 			[
 				'',

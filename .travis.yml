@@ -2,6 +2,7 @@ sudo: false
 language: php
 php:
   - 7.4
+  - 8.0
 matrix:
   fast_finish: true
 before_script:
