@@ -2,7 +2,7 @@
 
 /**
 * @package   s9e\Bencode
-* @copyright Copyright (c) 2014-2020 The s9e authors
+* @copyright Copyright (c) 2014-2021 The s9e authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\Bencode;
@@ -60,7 +60,7 @@ class Decoder
 	{
 		if ($this->max < 1)
 		{
-			if (strpos('-e', $this->bencoded[0]) !== false)
+			if (str_contains('-e', $this->bencoded[0]))
 			{
 				throw new DecodingException('Illegal character', 0);
 			}
@@ -111,7 +111,7 @@ class Decoder
 	{
 		$boundary = $this->len - 1;
 		$c = $this->bencoded[$boundary];
-		while (is_numeric($c) && --$boundary >= 0)
+		while (str_contains('0123456789', $c) && --$boundary >= 0)
 		{
 			$c = $this->bencoded[$boundary];
 		}

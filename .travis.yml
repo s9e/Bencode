@@ -1,16 +1,15 @@
 sudo: false
 language: php
 php:
-  - 7.4
   - 8.0
 matrix:
   fast_finish: true
 before_script:
   - phpenv config-rm xdebug.ini
   - composer install --no-interaction
-  - sh -c "if [ '$TRAVIS_PHP_VERSION' = '7.4' ]; then curl --compressed --insecure -Ls -o /tmp/ocular.phar https://scrutinizer-ci.com/ocular.phar; fi"
+  - sh -c "if [ '$TRAVIS_PHP_VERSION' = '8.0' ]; then curl --compressed --insecure -Ls -o /tmp/ocular.phar https://scrutinizer-ci.com/ocular.phar; fi"
 script:
   - ./vendor/bin/phpunit --group memory
-  - sh -c "if [ '$TRAVIS_PHP_VERSION' = '7.4' ]; then phpdbg -qrr ./vendor/bin/phpunit --exclude-group memory --coverage-clover /tmp/clover.xml; else ./vendor/bin/phpunit; fi"
+  - sh -c "if [ '$TRAVIS_PHP_VERSION' = '8.0' ]; then phpdbg -qrr ./vendor/bin/phpunit --exclude-group memory --coverage-clover /tmp/clover.xml; else ./vendor/bin/phpunit; fi"
 after_script:
-  - sh -c "if [ '$TRAVIS_PHP_VERSION' = '7.4' ]; then php /tmp/ocular.phar code-coverage:upload --format=php-clover /tmp/clover.xml; fi"
+  - sh -c "if [ '$TRAVIS_PHP_VERSION' = '8.0' ]; then php /tmp/ocular.phar code-coverage:upload --format=php-clover /tmp/clover.xml; fi"
