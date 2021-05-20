@@ -130,21 +130,13 @@ class Decoder
 
 	protected function decodeAnything()
 	{
-		$c = $this->bencoded[$this->offset];
-		if ($c === 'i')
+		return match($this->bencoded[$this->offset])
 		{
-			return $this->decodeInteger();
-		}
-		if ($c === 'd')
-		{
-			return $this->decodeDictionary();
-		}
-		if ($c === 'l')
-		{
-			return $this->decodeList();
-		}
-
-		return $this->decodeString();
+			'd'     => $this->decodeDictionary(),
+			'i'     => $this->decodeInteger(),
+			'l'     => $this->decodeList(),
+			default => $this->decodeString()
+		};
 	}
 
 	protected function decodeDictionary(): ArrayObject
