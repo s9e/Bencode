@@ -115,16 +115,13 @@ class Decoder
 		{
 			$c = $this->bencoded[$boundary];
 		}
-		if ($c === '-')
-		{
-			$boundary -= 2;
-		}
-		elseif ($c === 'i')
-		{
-			--$boundary;
-		}
 
-		$this->max = $boundary;
+		$this->max = match ($c)
+		{
+			'-'     => $boundary - 2,
+			'i'     => $boundary - 1,
+			default => $boundary
+		};
 		$this->checkBoundary();
 	}
 
