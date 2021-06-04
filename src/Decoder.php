@@ -110,11 +110,11 @@ class Decoder
 	protected function computeSafeBoundary(): void
 	{
 		$boundary = $this->len - 1;
-		$c = $this->bencoded[$boundary];
-		while (str_contains('0123456789', $c) && --$boundary >= 0)
+		do
 		{
 			$c = $this->bencoded[$boundary];
 		}
+		while (str_contains('0123456789', $c) && --$boundary >= 0);
 
 		$this->max = match ($c)
 		{
