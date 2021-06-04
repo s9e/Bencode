@@ -176,7 +176,7 @@ class Decoder
 		{
 			throw new DecodingException('Illegal character', $this->offset);
 		}
-		if ($this->bencoded[$this->offset] === '0' && $spn > 1)
+		if ($this->bencoded[$this->offset] === '0' && $spn !== 1)
 		{
 			$this->complianceError('Illegal character', 1 + $this->offset);
 		}
