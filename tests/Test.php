@@ -151,6 +151,14 @@ class Test extends TestCase
 					'x'   => new ArrayObject(['y' => 1])
 				])
 			],
+			[
+				'd1:0i0e1:1i1ee',
+				[1 => 1, 0 => 0]
+			],
+			[
+				'i1000000000e',
+				1000000000
+			],
 		];
 	}
 
