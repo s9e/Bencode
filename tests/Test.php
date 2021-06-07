@@ -481,6 +481,10 @@ class Test extends TestCase
 				'd3:fooi0e3:bar3:abce',
 				new ComplianceError("Out of order dictionary entry 'bar'", 9)
 			],
+			[
+				'd1:5i0e2:11i0ee',
+				new ComplianceError("Out of order dictionary entry '11'", 7)
+			],
 		];
 	}
 
