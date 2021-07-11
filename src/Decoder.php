@@ -34,7 +34,7 @@ class Decoder
 	*/
 	protected int $offset;
 
-	public static function decode(string $bencoded)
+	public static function decode(string $bencoded): ArrayObject|array|int|string
 	{
 		$decoder = new static($bencoded);
 		$value   = $decoder->decodeAnything();
@@ -124,7 +124,7 @@ class Decoder
 		$this->checkBoundary();
 	}
 
-	protected function decodeAnything()
+	protected function decodeAnything(): ArrayObject|array|int|string
 	{
 		return match($this->bencoded[$this->offset])
 		{
