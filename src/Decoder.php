@@ -8,6 +8,7 @@
 namespace s9e\Bencode;
 
 use ArrayObject;
+use function str_contains, strcmp, strlen, strspn, substr;
 use s9e\Bencode\Exceptions\ComplianceError;
 use s9e\Bencode\Exceptions\DecodingException;
 

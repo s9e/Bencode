@@ -8,6 +8,7 @@
 namespace s9e\Bencode;
 
 use ArrayObject;
+use function get_object_vars, is_array, is_bool, is_float, is_int, is_object, is_string, ksort, strlen;
 use s9e\Bencode\Exceptions\EncodingException;
 use stdClass;
 
