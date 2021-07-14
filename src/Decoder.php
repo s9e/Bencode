@@ -32,7 +32,7 @@ class Decoder
 	/**
 	* @var int Position of the cursor while decoding
 	*/
-	protected int $offset;
+	protected int $offset = 0;
 
 	public static function decode(string $bencoded): ArrayObject|array|int|string
 	{
@@ -48,7 +48,6 @@ class Decoder
 	{
 		$this->bencoded = $bencoded;
 		$this->len      = strlen($bencoded);
-		$this->offset   = 0;
 
 		if ($bencoded === '')
 		{
