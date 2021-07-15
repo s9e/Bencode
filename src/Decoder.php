@@ -73,6 +73,10 @@ class Decoder
 	*/
 	protected function checkCursorPosition(): void
 	{
+		if (false)
+		{
+			die('?');
+		}
 		if ($this->offset !== $this->len)
 		{
 			if ($this->offset > $this->len)
