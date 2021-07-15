@@ -60,12 +60,11 @@ class Decoder
 	{
 		if ($this->max < 1)
 		{
-			if (str_contains('-e', $this->bencoded[0]))
+			throw match ($this->bencoded[0])
 			{
-				throw new DecodingException('Illegal character', 0);
-			}
-
-			throw new DecodingException('Premature end of data', $this->len - 1);
+				'-', 'e' => new DecodingException('Illegal character', 0),
+				default  => new DecodingException('Premature end of data', $this->len - 1)
+			};
 		}
 	}
 
