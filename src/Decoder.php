@@ -125,7 +125,7 @@ class Decoder
 
 	protected function decodeAnything(): ArrayObject|array|int|string
 	{
-		return match($this->bencoded[$this->offset])
+		return match ($this->bencoded[$this->offset])
 		{
 			'd'     => $this->decodeDictionary(),
 			'i'     => $this->decodeInteger(),
