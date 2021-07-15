@@ -9,8 +9,7 @@
 		"php": ">=8.0"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "*",
-		"scrutinizer/ocular": "^1.8"
+		"phpunit/phpunit": "*"
 	},
 	"autoload": {
 		"psr-4": {
