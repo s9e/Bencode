@@ -49,10 +49,6 @@ class Decoder
 		$this->bencoded = $bencoded;
 		$this->len      = strlen($bencoded);
 
-		if ($bencoded === '')
-		{
-			throw new DecodingException('Premature end of data', 0);
-		}
 		$this->computeSafeBoundary();
 	}
 
@@ -60,9 +56,10 @@ class Decoder
 	{
 		if ($this->max < 1)
 		{
-			throw match ($this->bencoded[0])
+			throw match (substr($this->bencoded, 0, 1))
 			{
-				'-', 'e' => new DecodingException('Illegal character', 0),
+				'-', 'e' => new DecodingException('Illegal character',     0),
+				''       => new DecodingException('Premature end of data', 0),
 				default  => new DecodingException('Premature end of data', $this->len - 1)
 			};
 		}
@@ -109,7 +106,7 @@ class Decoder
 		$boundary = $this->len - 1;
 		do
 		{
-			$c = $this->bencoded[$boundary];
+			$c = substr($this->bencoded, $boundary, 1);
 		}
 		while (str_contains('0123456789', $c) && --$boundary >= 0);
 
