@@ -50,6 +50,7 @@ class Decoder
 		$this->len      = strlen($bencoded);
 
 		$this->computeSafeBoundary();
+		$this->checkBoundary();
 	}
 
 	protected function checkBoundary(): void
@@ -116,7 +117,6 @@ class Decoder
 			'i'     => $boundary - 1,
 			default => $boundary
 		};
-		$this->checkBoundary();
 	}
 
 	protected function decodeAnything(): ArrayObject|array|int|string
