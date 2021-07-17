@@ -398,6 +398,14 @@ class Test extends TestCase
 				new DecodingException('Premature end of data', 2)
 			],
 			[
+				'li-1',
+				new DecodingException('Premature end of data', 3)
+			],
+			[
+				'lli-1',
+				new DecodingException('Premature end of data', 4)
+			],
+			[
 				'lli123',
 				new DecodingException('Premature end of data', 5)
 			],
