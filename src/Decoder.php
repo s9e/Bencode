@@ -8,7 +8,8 @@
 namespace s9e\Bencode;
 
 use ArrayObject;
-use function str_contains, strcmp, strlen, strspn, substr;
+use const PHP_INT_MAX;
+use function is_float, str_contains, strcmp, strlen, strspn, substr;
 use s9e\Bencode\Exceptions\ComplianceError;
 use s9e\Bencode\Exceptions\DecodingException;
 
@@ -89,6 +90,14 @@ class Decoder
 		{
 			$msg = ($cmp === 0) ? 'Duplicate' : 'Out of order';
 			$this->complianceError($msg . " dictionary entry '" . $key . "'", $offset);
+		}
+	}
+
+	protected function checkIntegerOverflow(string $str): void
+	{
+		if (is_float(+$str))
+		{
+			throw new DecodingException('Integer overflow', $this->offset);
 		}
 	}
 
@@ -177,6 +186,10 @@ class Decoder
 
 		// Capture the value and cast it as an integer
 		$value = (int) substr($this->bencoded, $this->offset, $spn);
+		if ($value === PHP_INT_MAX)
+		{
+			$this->checkIntegerOverflow(substr($this->bencoded, $this->offset, $spn));
+		}
 
 		$this->offset += $spn;
 		if ($this->bencoded[$this->offset] !== $terminator)
@@ -223,8 +236,13 @@ class Decoder
 
 	protected function decodeString(): string
 	{
-		$len           = $this->decodeDigits(':');
-		$string        = substr($this->bencoded, $this->offset, $len);
+		$len = $this->decodeDigits(':');
+		if ($this->offset + $len >= PHP_INT_MAX)
+		{
+			throw new DecodingException('String length overflow', $this->offset - 1 - strlen((string) $len));
+		}
+
+		$string = substr($this->bencoded, $this->offset, $len);
 		$this->offset += $len;
 
 		return $string;

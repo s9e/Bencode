@@ -222,6 +222,14 @@ class Test extends TestCase
 				0
 			],
 			[
+				'i' . PHP_INT_MAX . 'e',
+				PHP_INT_MAX
+			],
+			[
+				'i-' . PHP_INT_MAX . 'e',
+				-PHP_INT_MAX
+			],
+			[
 				'le',
 				[]
 			],
@@ -492,6 +500,14 @@ class Test extends TestCase
 			[
 				'd1:5i0e2:11i0ee',
 				new ComplianceError("Out of order dictionary entry '11'", 7)
+			],
+			[
+				'i999999999999999999999999e',
+				new DecodingException('Integer overflow', 1)
+			],
+			[
+				'l' . PHP_INT_MAX . ':xe',
+				new DecodingException('String length overflow', 1)
 			],
 		];
 	}

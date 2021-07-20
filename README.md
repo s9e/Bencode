@@ -74,5 +74,6 @@ float(2.5)
 
  - Rejects invalid bencoded data with meaningful exception messages.
  - Uses [ArrayObject](https://www.php.net/manual/en/class.arrayobject.php) instances to represent dictionaries. Dictionaries can be created and read using either the array notation or the object notation.
+ - Integers are limited in range from `-PHP_INT_MAX` to `PHP_INT_MAX`.
  - The encoder accepts booleans but converts them to integers.
  - The encoder accepts floats that are equal to their integer value.
