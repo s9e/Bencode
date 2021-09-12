@@ -8,7 +8,7 @@
 namespace s9e\Bencode;
 
 use ArrayObject;
-use const PHP_INT_MAX;
+use const PHP_INT_MAX, PHP_INT_MIN;
 use function is_float, str_contains, strcmp, strlen, strspn, substr;
 use s9e\Bencode\Exceptions\ComplianceError;
 use s9e\Bencode\Exceptions\DecodingException;
@@ -54,6 +54,31 @@ class Decoder
 		$this->checkBoundary();
 	}
 
+	/**
+	* Cast given string as an integer and check for clamping
+	*/
+	protected function castInteger(string $string, bool $negative): int
+	{
+		if ($negative)
+		{
+			$value = (int) "-$string";
+			if ($value === PHP_INT_MIN)
+			{
+				$this->checkIntegerOverflow("-$string");
+			}
+		}
+		else
+		{
+			$value = (int) $string;
+			if ($value === PHP_INT_MAX)
+			{
+				$this->checkIntegerOverflow($string);
+			}
+		}
+
+		return $value;
+	}
+
 	protected function checkBoundary(): void
 	{
 		if ($this->max < 1)
@@ -97,7 +122,7 @@ class Decoder
 	{
 		if (is_float(+$str))
 		{
-			throw new DecodingException('Integer overflow', $this->offset);
+			throw new DecodingException('Integer overflow', $this->offset - 1 - strlen($str));
 		}
 	}
 
@@ -171,36 +196,6 @@ class Decoder
 		throw new DecodingException('Premature end of data', $this->len - 1);
 	}
 
-	protected function decodeDigits(string $terminator): int
-	{
-		// Digits sorted by decreasing frequency as observed on a random sample of torrent files
-		$spn = strspn($this->bencoded, '4615302879', $this->offset);
-		if (!$spn)
-		{
-			throw new DecodingException('Illegal character', $this->offset);
-		}
-		if ($this->bencoded[$this->offset] === '0' && $spn !== 1)
-		{
-			$this->complianceError('Illegal character', 1 + $this->offset);
-		}
-
-		// Capture the value and cast it as an integer
-		$value = (int) substr($this->bencoded, $this->offset, $spn);
-		if ($value === PHP_INT_MAX)
-		{
-			$this->checkIntegerOverflow(substr($this->bencoded, $this->offset, $spn));
-		}
-
-		$this->offset += $spn;
-		if ($this->bencoded[$this->offset] !== $terminator)
-		{
-			throw new DecodingException('Illegal character', $this->offset);
-		}
-		++$this->offset;
-
-		return $value;
-	}
-
 	protected function decodeInteger(): int
 	{
 		$negative = ($this->bencoded[++$this->offset] === '-');
@@ -209,9 +204,7 @@ class Decoder
 			$this->complianceError('Illegal character', $this->offset);
 		}
 
-		$value = $this->decodeDigits('e');
-
-		return ($negative) ? -$value : $value;
+		return $this->castInteger($this->readDigits('e'), $negative);
 	}
 
 	protected function decodeList(): array
@@ -236,7 +229,7 @@ class Decoder
 
 	protected function decodeString(): string
 	{
-		$len = $this->decodeDigits(':');
+		$len = (int) $this->readDigits(':');
 		if ($this->offset + $len >= PHP_INT_MAX)
 		{
 			throw new DecodingException('String length overflow', $this->offset - 1 - strlen((string) $len));
@@ -244,6 +237,31 @@ class Decoder
 
 		$string = substr($this->bencoded, $this->offset, $len);
 		$this->offset += $len;
+
+		return $string;
+	}
+
+	protected function readDigits(string $terminator): string
+	{
+		// Digits sorted by decreasing frequency as observed on a random sample of torrent files
+		$spn = strspn($this->bencoded, '4615302879', $this->offset);
+		if (!$spn)
+		{
+			throw new DecodingException('Illegal character', $this->offset);
+		}
+		if ($this->bencoded[$this->offset] === '0' && $spn !== 1)
+		{
+			$this->complianceError('Illegal character', 1 + $this->offset);
+		}
+
+		$string = substr($this->bencoded, $this->offset, $spn);
+
+		$this->offset += $spn;
+		if ($this->bencoded[$this->offset] !== $terminator)
+		{
+			throw new DecodingException('Illegal character', $this->offset);
+		}
+		++$this->offset;
 
 		return $string;
 	}

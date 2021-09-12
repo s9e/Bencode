@@ -226,8 +226,8 @@ class Test extends TestCase
 				PHP_INT_MAX
 			],
 			[
-				'i-' . PHP_INT_MAX . 'e',
-				-PHP_INT_MAX
+				'i' . PHP_INT_MIN . 'e',
+				PHP_INT_MIN
 			],
 			[
 				'le',
