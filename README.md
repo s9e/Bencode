@@ -1,4 +1,4 @@
-s9e\Bencode is a clean and efficient [Bencode](http://en.wikipedia.org/wiki/Bencode) encoder/decoder.
+s9e\Bencode is a clean and efficient [Bencode](http://en.wikipedia.org/wiki/Bencode) encoder/decoder. It is designed to handle malformed and malicious input gracefully.
 
 [![Build Status](https://scrutinizer-ci.com/g/s9e/Bencode/badges/build.png?b=master)](https://scrutinizer-ci.com/g/s9e/Bencode/build-status/master)
 [![Code Coverage](https://scrutinizer-ci.com/g/s9e/Bencode/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/s9e/Bencode/?branch=master)

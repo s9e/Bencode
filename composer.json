@@ -1,7 +1,7 @@
 {
 	"name": "s9e/bencode",
 	"type": "library",
-	"description": "Fast and efficient bencode decoder/encoder",
+	"description": "Fast and efficient bencode decoder/encoder, designed to handle malformed and malicious input gracefully.",
 	"homepage": "https://github.com/s9e/Bencode/",
 	"keywords": ["bencode","bittorrent","torrent"],
 	"license": "MIT",
