@@ -506,6 +506,10 @@ class Test extends TestCase
 				new DecodingException('Integer overflow', 1)
 			],
 			[
+				'i-999999999999999999999999e',
+				new DecodingException('Integer overflow', 1)
+			],
+			[
 				'l' . PHP_INT_MAX . ':xe',
 				new DecodingException('String length overflow', 1)
 			],

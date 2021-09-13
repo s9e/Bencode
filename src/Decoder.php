@@ -61,19 +61,18 @@ class Decoder
 	{
 		if ($negative)
 		{
-			$value = (int) "-$string";
-			if ($value === PHP_INT_MIN)
-			{
-				$this->checkIntegerOverflow("-$string");
-			}
+			$string = "-$string";
+			$clamp  = PHP_INT_MIN;
 		}
 		else
 		{
-			$value = (int) $string;
-			if ($value === PHP_INT_MAX)
-			{
-				$this->checkIntegerOverflow($string);
-			}
+			$clamp = PHP_INT_MAX;
+		}
+
+		$value = (int) $string;
+		if ($value === $clamp)
+		{
+			$this->checkIntegerOverflow($string);
 		}
 
 		return $value;
