@@ -107,11 +107,14 @@ class Decoder
 		}
 	}
 
-	protected function checkDictionaryCompliance(int $offset, string $key, string $lastKey): void
+	protected function checkDictionaryCompliance(string $key, string $lastKey): void
 	{
 		$cmp = strcmp($key, $lastKey);
 		if ($cmp <= 0)
 		{
+			// Compute the offset of the start of the string used as key
+			$offset = $this->offset - strlen(strlen($key) . ':') - strlen($key);
+
 			$msg = ($cmp === 0) ? 'Duplicate' : 'Out of order';
 			$this->complianceError($msg . " dictionary entry '" . $key . "'", $offset);
 		}
@@ -178,11 +181,10 @@ class Decoder
 				return new ArrayObject($values, ArrayObject::ARRAY_AS_PROPS);
 			}
 
-			$offset = $this->offset;
-			$key    = $this->decodeString();
+			$key = $this->decodeString();
 			if (isset($lastKey))
 			{
-				$this->checkDictionaryCompliance($offset, $key, $lastKey);
+				$this->checkDictionaryCompliance($key, $lastKey);
 			}
 			if ($this->offset > $this->max)
 			{
