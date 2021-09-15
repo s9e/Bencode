@@ -159,8 +159,8 @@ class Decoder
 	{
 		return match ($this->bencoded[$this->offset])
 		{
-			'd'     => $this->decodeDictionary(),
 			'i'     => $this->decodeInteger(),
+			'd'     => $this->decodeDictionary(),
 			'l'     => $this->decodeList(),
 			default => $this->decodeString()
 		};
@@ -174,14 +174,21 @@ class Decoder
 		++$this->offset;
 		while ($this->offset <= $this->max)
 		{
-			if ($this->bencoded[$this->offset] === 'e')
+			$c = $this->bencoded[$this->offset];
+			if ($c === 'e')
 			{
 				++$this->offset;
 
 				return new ArrayObject($values, ArrayObject::ARRAY_AS_PROPS);
 			}
 
-			$key = $this->decodeString();
+			// Quickly match the most common keys found in dictionaries
+			$key = match ($c)
+			{
+				'4'     => $this->decodeFastString('4:path',   6, 'path'),
+				'6'     => $this->decodeFastString('6:length', 8, 'length'),
+				default => $this->decodeString()
+			};
 			if (isset($lastKey))
 			{
 				$this->checkDictionaryCompliance($key, $lastKey);
@@ -195,6 +202,23 @@ class Decoder
 		}
 
 		throw new DecodingException('Premature end of data', $this->len - 1);
+	}
+
+	/**
+	* @param string $match Bencoded string to match
+	* @param int    $len   Length of the bencoded string
+	* @param string $value String value to return if the string matches
+	*/
+	protected function decodeFastString(string $match, int $len, string $value): string
+	{
+		if (substr($this->bencoded, $this->offset, $len) === $match)
+		{
+			$this->offset += $len;
+
+			return $value;
+		}
+
+		return $this->decodeString();
 	}
 
 	protected function decodeInteger(): int
@@ -245,7 +269,7 @@ class Decoder
 	protected function readDigits(string $terminator): string
 	{
 		// Digits sorted by decreasing frequency as observed on a random sample of torrent files
-		$spn = strspn($this->bencoded, '4615302879', $this->offset);
+		$spn = strspn($this->bencoded, '1463720859', $this->offset);
 		if (!$spn)
 		{
 			throw new DecodingException('Illegal character', $this->offset);

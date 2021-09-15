@@ -288,6 +288,10 @@ class Test extends TestCase
 				'lli0ei1eeli2ei3eee',
 				[[0, 1], [2, 3]]
 			],
+			[
+				'd6:Lengthi1e4:Pathi2e6:lengthi3e4:pathi4ee',
+				new ArrayObject(['Length' => 1, 'Path' => 2, 'length' => 3, 'path' => 4])
+			],
 		];
 	}
 
