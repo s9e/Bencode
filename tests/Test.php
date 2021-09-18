@@ -374,10 +374,6 @@ class Test extends TestCase
 				new DecodingException('Illegal character', 1)
 			],
 			[
-				'3:abcd',
-				new ComplianceError('Superfluous content', 5)
-			],
-			[
 				'li',
 				new DecodingException('Premature end of data', 1)
 			],
@@ -438,14 +434,6 @@ class Test extends TestCase
 				new DecodingException('Illegal character', 0)
 			],
 			[
-				'3:abc3:abc',
-				new ComplianceError('Superfluous content', 5)
-			],
-			[
-				'3:abci',
-				new ComplianceError('Superfluous content', 5)
-			],
-			[
 				'3:',
 				new DecodingException('Premature end of data', 1)
 			],
@@ -462,22 +450,6 @@ class Test extends TestCase
 				new DecodingException('Premature end of data', 5)
 			],
 			[
-				'i0123e',
-				new ComplianceError('Illegal character', 2)
-			],
-			[
-				'i00e',
-				new ComplianceError('Illegal character', 2)
-			],
-			[
-				'i-0e',
-				new ComplianceError('Illegal character', 2)
-			],
-			[
-				'01:a',
-				new ComplianceError('Illegal character', 1)
-			],
-			[
 				'1',
 				new DecodingException('Premature end of data', 0)
 			],
@@ -490,22 +462,6 @@ class Test extends TestCase
 				new DecodingException('Illegal character', 0)
 			],
 			[
-				'd3:fooi0e3:foo3:abce',
-				new ComplianceError("Duplicate dictionary entry 'foo'", 9)
-			],
-			[
-				'd4:abcdi0e4:abcdli0eee',
-				new ComplianceError("Duplicate dictionary entry 'abcd'", 10)
-			],
-			[
-				'd3:fooi0e3:bar3:abce',
-				new ComplianceError("Out of order dictionary entry 'bar'", 9)
-			],
-			[
-				'd1:5i0e2:11i0ee',
-				new ComplianceError("Out of order dictionary entry '11'", 7)
-			],
-			[
 				'i999999999999999999999999e',
 				new DecodingException('Integer overflow', 1)
 			],
@@ -516,6 +472,96 @@ class Test extends TestCase
 			[
 				'l' . PHP_INT_MAX . ':xe',
 				new DecodingException('String length overflow', 1)
+			],
+		];
+	}
+
+	/**
+	* @dataProvider getDecodeNonComformantTests
+	*/
+	public function testDecodeNonComformant($input, $nonCompliantValue, $exception)
+	{
+		$this->expectException(get_class($exception));
+		$this->expectExceptionMessage($exception->getMessage());
+		$this->assertNull(Bencode::decode($input));
+	}
+
+	/**
+	* @dataProvider getDecodeNonComformantTests
+	*/
+	public function testDecodeRelaxed($input, $nonCompliantValue, $exception)
+	{
+		$actual       = Bencode::decodeNonCompliant($input);
+		$assertMethod = (is_object($nonCompliantValue)) ? 'assertEquals' : 'assertSame';
+
+		$this->$assertMethod($nonCompliantValue, $actual);
+
+		if ($nonCompliantValue instanceof ArrayObject)
+		{
+			$this->assertSame(
+				array_keys($nonCompliantValue->getArrayCopy()),
+				array_keys($actual->getArrayCopy())
+			);
+		}
+	}
+
+	public function getDecodeNonComformantTests()
+	{
+		return [
+			[
+				'3:abcd',
+				'abc',
+				new ComplianceError('Superfluous content', 5)
+			],
+			[
+				'3:abci',
+				'abc',
+				new ComplianceError('Superfluous content', 5)
+			],
+			[
+				'3:abc3:abc',
+				'abc',
+				new ComplianceError('Superfluous content', 5)
+			],
+			[
+				'i0123e',
+				123,
+				new ComplianceError('Illegal character', 2)
+			],
+			[
+				'i00e',
+				0,
+				new ComplianceError('Illegal character', 2)
+			],
+			[
+				'i-0e',
+				0,
+				new ComplianceError('Illegal character', 2)
+			],
+			[
+				'01:a',
+				'a',
+				new ComplianceError('Illegal character', 1)
+			],
+			[
+				'd3:fooi0e3:foo3:abce',
+				new ArrayObject(['foo' => 'abc']),
+				new ComplianceError("Duplicate dictionary entry 'foo'", 9)
+			],
+			[
+				'd4:abcdi0e4:abcdli0eee',
+				new ArrayObject(['abcd' => [0]]),
+				new ComplianceError("Duplicate dictionary entry 'abcd'", 10)
+			],
+			[
+				'd3:fooi0e3:bar3:abce',
+				new ArrayObject(['bar' => 'abc', 'foo' => 0]),
+				new ComplianceError("Out of order dictionary entry 'bar'", 9)
+			],
+			[
+				'd1:5i0e2:11i0ee',
+				new ArrayObject(['11' => 0, '5' => 0]),
+				new ComplianceError("Out of order dictionary entry '11'", 7)
 			],
 		];
 	}

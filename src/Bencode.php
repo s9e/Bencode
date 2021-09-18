@@ -14,6 +14,11 @@ class Bencode
 		return Decoder::decode($bencoded);
 	}
 
+	public static function decodeNonCompliant(string $bencoded)
+	{
+		return NonCompliantDecoder::decode($bencoded);
+	}
+
 	public static function encode($value): string
 	{
 		return Encoder::encode($value);

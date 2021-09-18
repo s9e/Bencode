@@ -70,6 +70,49 @@ string(17) "Unsupported value"
 float(2.5)
 ```
 
+#### Salvage non-compliant input
+
+By default, the decoder rejects non-compliant input with a `ComplianceError` exception, which is a subtype of `DecodingException`. If you have to handle input produced by a non-compliant encoder, the `decodeNonCompliant` method may be able to salvage it by replacing illegal values as follow:
+
+ - Unordered dictionaries are automatically sorted.
+ - Duplicate entries in dictionaries overwrite prior entries.
+ - Leading `0`s are removed from integers.
+ - Negative zero is converted to `0`.
+ - Trailing junk at the end of the input is ignored.
+
+In the following example, we try to load an invalid dictionary normally and upon failure, we retry using the non-compliant decoder.
+
+```php
+use s9e\Bencode\Bencode;
+
+$input = 'd3:fooi42e3:bar4:spame';
+try
+{
+	$value = Bencode::decode($input);
+}
+catch (s9e\Bencode\Exceptions\ComplianceError $e)
+{
+	echo 'Failed: ', $e->getMessage(), "\nRetry with non-compliant decoder:\n";
+
+	$value = Bencode::decodeNonCompliant($input);
+	print_r($value);
+}
+```
+```
+Failed: Out of order dictionary entry 'bar' at offset 10
+Retry with non-compliant decoder:
+ArrayObject Object
+(
+    [storage:ArrayObject:private] => Array
+        (
+            [bar] => spam
+            [foo] => 42
+        )
+
+)
+```
+
+
 ### Implementation details
 
  - Rejects invalid bencoded data with meaningful exception messages.
