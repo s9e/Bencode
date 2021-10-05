@@ -8,8 +8,8 @@
 namespace s9e\Bencode;
 
 use ArrayObject;
-use const PHP_INT_MAX, PHP_INT_MIN;
-use function is_float, str_contains, strcmp, strlen, strspn, substr;
+use const PHP_INT_MAX, PHP_INT_MIN, false;
+use function is_float, str_contains, strcmp, strlen, strspn, substr, substr_compare;
 use s9e\Bencode\Exceptions\ComplianceError;
 use s9e\Bencode\Exceptions\DecodingException;
 
@@ -198,7 +198,7 @@ class Decoder
 	*/
 	protected function decodeFastString(string $match, int $len, string $value): string
 	{
-		if (substr($this->bencoded, $this->offset, $len) === $match)
+		if (substr_compare($this->bencoded, $match, $this->offset, $len, false) === 0)
 		{
 			$this->offset += $len;
 
