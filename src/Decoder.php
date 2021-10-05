@@ -107,19 +107,6 @@ class Decoder
 		}
 	}
 
-	protected function checkDictionaryCompliance(string $key, string $lastKey): void
-	{
-		$cmp = strcmp($key, $lastKey);
-		if ($cmp <= 0)
-		{
-			// Compute the offset of the start of the string used as key
-			$offset = $this->offset - strlen(strlen($key) . ':') - strlen($key);
-
-			$msg = ($cmp === 0) ? 'Duplicate' : 'Out of order';
-			$this->complianceError($msg . " dictionary entry '" . $key . "'", $offset);
-		}
-	}
-
 	protected function checkIntegerOverflow(string $str): void
 	{
 		if (is_float(+$str))
@@ -189,9 +176,9 @@ class Decoder
 				'6'     => $this->decodeFastString('6:length', 8, 'length'),
 				default => $this->decodeString()
 			};
-			if (isset($lastKey))
+			if (isset($lastKey) && strcmp($key, $lastKey) <= 0)
 			{
-				$this->checkDictionaryCompliance($key, $lastKey);
+				$this->dictionaryComplianceError($key, $lastKey);
 			}
 			if ($this->offset > $this->max)
 			{
@@ -264,6 +251,15 @@ class Decoder
 		$this->offset += $len;
 
 		return $string;
+	}
+
+	protected function dictionaryComplianceError(string $key, string $lastKey): void
+	{
+		// Compute the offset of the start of the string used as key
+		$offset = $this->offset - strlen(strlen($key) . ':') - strlen($key);
+
+		$msg = ($key === $lastKey) ? 'Duplicate' : 'Out of order';
+		$this->complianceError($msg . " dictionary entry '" . $key . "'", $offset);
 	}
 
 	protected function readDigits(string $terminator): string

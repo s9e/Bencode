@@ -18,14 +18,6 @@ class NonCompliantDecoder extends Decoder
 	*/
 	protected bool $sortDictionary = false;
 
-	protected function checkDictionaryCompliance(string $key, string $lastKey): void
-	{
-		if (!$this->sortDictionary && strcmp($key, $lastKey) < 0)
-		{
-			$this->sortDictionary = true;
-		}
-	}
-
 	protected function complianceError(string $message, int $offset): void
 	{
 		// Do nothing
@@ -43,5 +35,10 @@ class NonCompliantDecoder extends Decoder
 		$this->sortDictionary = $previousState;
 
 		return $dictionary;
+	}
+
+	protected function dictionaryComplianceError(string $key, string $lastKey): void
+	{
+		$this->sortDictionary = true;
 	}
 }
