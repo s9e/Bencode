@@ -6,6 +6,7 @@ use ArrayObject;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 use s9e\Bencode\Bencode;
+use s9e\Bencode\Decoder;
 use s9e\Bencode\Exceptions\ComplianceError;
 use s9e\Bencode\Exceptions\DecodingException;
 use s9e\Bencode\Exceptions\EncodingException;
@@ -471,7 +472,7 @@ class Test extends TestCase
 			],
 			[
 				'l' . PHP_INT_MAX . ':xe',
-				new DecodingException('String length overflow', 1)
+				new DecodingException('String length overflow', strlen('l' . PHP_INT_MAX))
 			],
 		];
 	}
@@ -580,8 +581,24 @@ class Test extends TestCase
 		}
 		$this->assertSame(['bar' => 'spam', 'foo' => 42], $actual);
 	}
+
+	public function testFaultyDecoder()
+	{
+		$this->expectException('TypeError');
+		FaultyDecoder::decode('1:x');
+	}
 }
 
 class foo extends stdClass
 {
+}
+
+class FaultyDecoder extends Decoder
+{
+	protected function decodeString(): string
+	{
+		$this->offset = 1.2;
+
+		return '?';
+	}
 }

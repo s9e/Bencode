@@ -8,6 +8,8 @@
 namespace s9e\Bencode;
 
 use ArrayObject;
+use Throwable;
+use TypeError;
 use const PHP_INT_MAX, PHP_INT_MIN, false;
 use function is_float, str_contains, strcmp, strlen, strspn, substr, substr_compare;
 use s9e\Bencode\Exceptions\ComplianceError;
@@ -38,7 +40,14 @@ class Decoder
 	public static function decode(string $bencoded): ArrayObject|array|int|string
 	{
 		$decoder = new static($bencoded);
-		$value   = $decoder->decodeAnything();
+		try
+		{
+			$value = $decoder->decodeAnything();
+		}
+		catch (TypeError $e)
+		{
+			throw self::convertTypeError($e, $decoder->offset);
+		}
 
 		$decoder->checkCursorPosition();
 
@@ -142,6 +151,19 @@ class Decoder
 		};
 	}
 
+	protected static function convertTypeError(TypeError $e, int $offset): Throwable
+	{
+		// A type error can occur in decodeString() if the string length exceeds an int
+		$frame = $e->getTrace()[0];
+		if ($frame['class'] === __CLASS__ && $frame['function'] === 'decodeString')
+		{
+			return new DecodingException('String length overflow', $offset - 1);
+		}
+
+		// Return any other error as-is
+		return $e;
+	}
+
 	protected function decodeAnything(): ArrayObject|array|int|string
 	{
 		return match ($this->bencoded[$this->offset])
@@ -242,11 +264,6 @@ class Decoder
 	protected function decodeString(): string
 	{
 		$len = (int) $this->readDigits(':');
-		if ($this->offset + $len >= PHP_INT_MAX)
-		{
-			throw new DecodingException('String length overflow', $this->offset - 1 - strlen((string) $len));
-		}
-
 		$string = substr($this->bencoded, $this->offset, $len);
 		$this->offset += $len;
 
