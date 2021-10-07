@@ -68,20 +68,17 @@ class Decoder
 	*/
 	protected function castInteger(string $string, bool $negative): int
 	{
+		$clamp = PHP_INT_MAX;
 		if ($negative)
 		{
 			$string = "-$string";
 			$clamp  = PHP_INT_MIN;
 		}
-		else
-		{
-			$clamp = PHP_INT_MAX;
-		}
 
 		$value = (int) $string;
-		if ($value === $clamp)
+		if ($value === $clamp && is_float(+$string))
 		{
-			$this->checkIntegerOverflow($string);
+			throw new DecodingException('Integer overflow', $this->offset - 1 - strlen($string));
 		}
 
 		return $value;
@@ -113,14 +110,6 @@ class Decoder
 			}
 
 			$this->complianceError('Superfluous content', $this->offset);
-		}
-	}
-
-	protected function checkIntegerOverflow(string $str): void
-	{
-		if (is_float(+$str))
-		{
-			throw new DecodingException('Integer overflow', $this->offset - 1 - strlen($str));
 		}
 	}
 
