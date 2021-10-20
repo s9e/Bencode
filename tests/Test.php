@@ -427,6 +427,10 @@ class Test extends TestCase
 				new DecodingException('Illegal character', 1)
 			],
 			[
+				'l0l',
+				new DecodingException('Illegal character', 2)
+			],
+			[
 				'3a',
 				new DecodingException('Illegal character', 1)
 			],
