@@ -276,12 +276,12 @@ class Decoder
 		{
 			throw new DecodingException('Illegal character', $this->offset);
 		}
-		if ($this->bencoded[$this->offset] === '0' && $spn !== 1)
+
+		$string = substr($this->bencoded, $this->offset, $spn);
+		if ($string[0] === '0' && $spn !== 1)
 		{
 			$this->complianceError('Illegal character', 1 + $this->offset);
 		}
-
-		$string = substr($this->bencoded, $this->offset, $spn);
 
 		$this->offset += $spn;
 		if ($this->bencoded[$this->offset] !== $terminator)
