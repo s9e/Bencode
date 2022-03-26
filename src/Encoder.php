@@ -9,7 +9,7 @@ namespace s9e\Bencode;
 
 use ArrayObject;
 use const SORT_STRING;
-use function get_object_vars, is_array, is_bool, is_float, is_int, is_object, is_string, ksort, strlen;
+use function array_is_list, get_object_vars, is_array, is_bool, is_float, is_int, is_object, is_string, ksort, strlen;
 use s9e\Bencode\Exceptions\EncodingException;
 use stdClass;
 
@@ -35,21 +35,6 @@ class Encoder
 		}
 
 		return self::encode(self::coerceUnsupportedValue($value));
-	}
-
-	protected static function arrayIsList(array $array): bool
-	{
-		$expectedKey = 0;
-		foreach ($array as $k => $v)
-		{
-			if ($k !== $expectedKey)
-			{
-				return false;
-			}
-			++$expectedKey;
-		}
-
-		return true;
 	}
 
 	protected static function coerceBool(bool $value): int
@@ -87,7 +72,7 @@ class Encoder
 	*/
 	protected static function encodeArray(array $value): string
 	{
-		return self::arrayIsList($value)
+		return array_is_list($value)
 			? self::encodeIndexedArray($value)
 			: self::encodeAssociativeArray($value);
 	}
