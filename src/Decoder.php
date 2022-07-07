@@ -272,7 +272,7 @@ class Decoder
 	{
 		// Digits sorted by decreasing frequency as observed on a random sample of torrent files
 		$spn = strspn($this->bencoded, '1463720859', $this->offset);
-		if (!$spn)
+		if ($spn === 0)
 		{
 			throw new DecodingException('Illegal character', $this->offset);
 		}
