@@ -16,5 +16,9 @@
 		"psr-4": {
 			"s9e\\Bencode\\": "src"
 		}
+	},
+	"scripts": {
+		"fuzz": "fuzzer/fuzz.sh",
+		"test": "vendor/bin/phpunit"
 	}
 }
