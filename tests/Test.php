@@ -478,6 +478,10 @@ class Test extends TestCase
 				'l' . PHP_INT_MAX . ':xe',
 				new DecodingException('String length overflow', strlen('l' . PHP_INT_MAX))
 			],
+			[
+				'li111',
+				new DecodingException('Premature end of data', 4)
+			],
 		];
 	}
 
