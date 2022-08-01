@@ -23,7 +23,7 @@ class Encoder
 		}
 		if (is_array($value))
 		{
-			return self::encodeArray($value);
+			return static::encodeArray($value);
 		}
 		if (is_int($value))
 		{
@@ -31,10 +31,10 @@ class Encoder
 		}
 		if (is_object($value))
 		{
-			return self::encodeObject($value);
+			return static::encodeObject($value);
 		}
 
-		return self::encode(self::coerceUnsupportedValue($value));
+		return static::encode(static::coerceUnsupportedValue($value));
 	}
 
 	protected static function coerceBool(bool $value): int
@@ -57,11 +57,11 @@ class Encoder
 	{
 		if (is_float($value))
 		{
-			return self::coerceFloat($value);
+			return static::coerceFloat($value);
 		}
 		if (is_bool($value))
 		{
-			return self::coerceBool($value);
+			return static::coerceBool($value);
 		}
 
 		throw new EncodingException('Unsupported value', $value);
@@ -73,8 +73,8 @@ class Encoder
 	protected static function encodeArray(array $value): string
 	{
 		return array_is_list($value)
-			? self::encodeIndexedArray($value)
-			: self::encodeAssociativeArray($value);
+			? static::encodeIndexedArray($value)
+			: static::encodeAssociativeArray($value);
 	}
 
 	protected static function encodeAssociativeArray(array $array): string
@@ -84,7 +84,7 @@ class Encoder
 		$str = 'd';
 		foreach ($array as $k => $v)
 		{
-			$str .= strlen((string) $k) . ':' . $k . self::encode($v);
+			$str .= strlen((string) $k) . ':' . $k . static::encode($v);
 		}
 		$str .= 'e';
 
@@ -96,7 +96,7 @@ class Encoder
 		$str = 'l';
 		foreach ($array as $v)
 		{
-			$str .= self::encode($v);
+			$str .= static::encode($v);
 		}
 		$str .= 'e';
 
@@ -107,11 +107,11 @@ class Encoder
 	{
 		if ($value instanceof ArrayObject)
 		{
-			return self::encodeAssociativeArray($value->getArrayCopy());
+			return static::encodeAssociativeArray($value->getArrayCopy());
 		}
 		if ($value instanceof stdClass)
 		{
-			return self::encodeAssociativeArray(get_object_vars($value));
+			return static::encodeAssociativeArray(get_object_vars($value));
 		}
 
 		throw new EncodingException('Unsupported value', $value);

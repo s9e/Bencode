@@ -46,7 +46,7 @@ class Decoder
 		}
 		catch (TypeError $e)
 		{
-			throw self::convertTypeError($e, $decoder->offset);
+			throw static::convertTypeError($e, $decoder->offset);
 		}
 
 		$decoder->checkCursorPosition();
