@@ -58,8 +58,8 @@ class Decoder
 	{
 		$this->bencoded = $bencoded;
 		$this->len      = strlen($bencoded);
+		$this->max      = $this->getSafeBoundary();
 
-		$this->computeSafeBoundary();
 		$this->checkBoundary();
 	}
 
@@ -116,28 +116,6 @@ class Decoder
 	protected function complianceError(string $message, int $offset): void
 	{
 		throw new ComplianceError($message, $offset);
-	}
-
-	/**
-	* Adjust the rightmost boundary to the last safe character that can start a value
-	*
-	* Will rewind the boundary to skip the rightmost digits, optionally preceded by "i" or "i-"
-	*/
-	protected function computeSafeBoundary(): void
-	{
-		$boundary = $this->len - 1;
-		do
-		{
-			$c = substr($this->bencoded, $boundary, 1);
-		}
-		while (str_contains('0123456789', $c) && --$boundary >= 0);
-
-		$this->max = match ($c)
-		{
-			'-'     => $boundary - 2,
-			'i'     => $boundary - 1,
-			default => $boundary
-		};
 	}
 
 	protected static function convertTypeError(TypeError $e, int $offset): Throwable
@@ -266,6 +244,28 @@ class Decoder
 
 		$msg = ($key === $lastKey) ? 'Duplicate' : 'Out of order';
 		$this->complianceError($msg . " dictionary entry '" . $key . "'", $offset);
+	}
+
+	/**
+	* Return the rightmost boundary to the last safe character that can start a value
+	*
+	* Will rewind the boundary to skip the rightmost digits, optionally preceded by "i" or "i-"
+	*/
+	protected function getSafeBoundary(): int
+	{
+		$boundary = $this->len - 1;
+		do
+		{
+			$c = substr($this->bencoded, $boundary, 1);
+		}
+		while (str_contains('0123456789', $c) && --$boundary >= 0);
+
+		return match ($c)
+		{
+			'-'     => $boundary - 2,
+			'i'     => $boundary - 1,
+			default => $boundary
+		};
 	}
 
 	protected function readDigits(string $terminator): string
