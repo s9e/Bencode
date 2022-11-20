@@ -482,6 +482,10 @@ class Test extends TestCase
 				'li111',
 				new DecodingException('Premature end of data', 4)
 			],
+			[
+				'd4:path',
+				new DecodingException('Premature end of data', 6)
+			],
 		];
 	}
 
