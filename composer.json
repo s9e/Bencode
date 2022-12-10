@@ -10,7 +10,7 @@
 	},
 	"require-dev": {
 		"phpunit/phpunit": "*",
-		"nikic/php-fuzzer": "^0.0.5"
+		"nikic/php-fuzzer": "*"
 	},
 	"autoload": {
 		"psr-4": {
