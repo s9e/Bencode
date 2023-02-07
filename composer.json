@@ -9,7 +9,7 @@
 		"php": ">=8.1"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "*",
+		"phpunit/phpunit": ">=10.0",
 		"nikic/php-fuzzer": "*"
 	},
 	"autoload": {

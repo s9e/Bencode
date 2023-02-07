@@ -90,7 +90,7 @@ class Test extends TestCase
 		$this->assertSame($bencoded, Bencode::encode($value));
 	}
 
-	public function getEncodeTests()
+	public static function getEncodeTests()
 	{
 		return [
 			[
@@ -187,7 +187,7 @@ class Test extends TestCase
 		}
 	}
 
-	public function getEncodeInvalidTests()
+	public static function getEncodeInvalidTests()
 	{
 		$fp = fopen('php://stdin', 'rb');
 		fclose($fp);
@@ -207,7 +207,7 @@ class Test extends TestCase
 		$this->assertEquals($value, Bencode::decode($bencoded));
 	}
 
-	public function getDecodeTests()
+	public static function getDecodeTests()
 	{
 		return [
 			[
@@ -315,7 +315,7 @@ class Test extends TestCase
 		}
 	}
 
-	public function getDecodeInvalidTests()
+	public static function getDecodeInvalidTests()
 	{
 		return [
 			[
@@ -518,7 +518,7 @@ class Test extends TestCase
 		}
 	}
 
-	public function getDecodeNonComformantTests()
+	public static function getDecodeNonComformantTests()
 	{
 		return [
 			[
