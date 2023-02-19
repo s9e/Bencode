@@ -3,5 +3,6 @@
 /.travis.yml    export-ignore
 /README.md      export-ignore
 /composer.lock  export-ignore
+/fuzzer         export-ignore
 /phpunit.xml    export-ignore
 /tests          export-ignore
