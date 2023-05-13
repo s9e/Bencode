@@ -18,11 +18,6 @@ use s9e\Bencode\Exceptions\DecodingException;
 class Decoder
 {
 	/**
-	* @var string Bencoded string being decoded
-	*/
-	protected string $bencoded;
-
-	/**
 	* @var int Length of the bencoded string
 	*/
 	protected int $len;
@@ -37,6 +32,9 @@ class Decoder
 	*/
 	protected int $offset = 0;
 
+	/**
+	* @param string $bencoded Bencoded string to decode
+	*/
 	public static function decode(string $bencoded): ArrayObject|array|int|string
 	{
 		$decoder = new static($bencoded);
@@ -54,11 +52,13 @@ class Decoder
 		return $value;
 	}
 
-	protected function __construct(string $bencoded)
+	/**
+	* @param string $bencoded Bencoded string being decoded
+	*/
+	protected function __construct(protected readonly string $bencoded)
 	{
-		$this->bencoded = $bencoded;
-		$this->len      = strlen($bencoded);
-		$this->max      = $this->getSafeBoundary();
+		$this->len = strlen($bencoded);
+		$this->max = $this->getSafeBoundary();
 
 		$this->checkBoundary();
 	}
