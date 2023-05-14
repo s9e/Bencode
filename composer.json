@@ -17,6 +17,11 @@
 			"s9e\\Bencode\\": "src"
 		}
 	},
+	"autoload-dev": {
+		"psr-4": {
+			"s9e\\Bencode\\Tests\\": "tests"
+		}
+	},
 	"scripts": {
 		"fuzz": "fuzzer/fuzz.sh",
 		"test": "vendor/bin/phpunit"

@@ -102,15 +102,16 @@ class Decoder
 	*/
 	protected function checkCursorPosition(): void
 	{
-		if ($this->offset !== $this->len)
+		if ($this->offset === $this->len)
 		{
-			if ($this->offset > $this->len)
-			{
-				throw new DecodingException('Premature end of data', $this->len - 1);
-			}
-
-			$this->complianceError('Superfluous content', $this->offset);
+			return;
 		}
+		if ($this->offset > $this->len)
+		{
+			throw new DecodingException('Premature end of data', $this->len - 1);
+		}
+
+		$this->complianceError('Superfluous content', $this->offset);
 	}
 
 	protected function complianceError(string $message, int $offset): void

@@ -5,19 +5,21 @@ namespace s9e\Bencode\Tests;
 use ArrayObject;
 use PHPUnit\Framework\TestCase;
 use TypeError;
-use s9e\Bencode\Bencode;
 use s9e\Bencode\Decoder;
 use s9e\Bencode\Exceptions\ComplianceError;
 use s9e\Bencode\Exceptions\DecodingException;
-use s9e\Bencode\Exceptions\EncodingException;
-use stdClass;
 
-class Test extends TestCase
+/**
+* @covers s9e\Bencode\Decoder
+*/
+class DecoderTest extends TestCase
 {
+	use NonCompliantTestProvider;
+
 	public static function setUpBeforeClass(): void
 	{
 		// Preload the library so the memory-related tests don't count it as overhead
-		Bencode::decode('i1e');
+		Decoder::decode('i1e');
 	}
 
 	/**
@@ -43,7 +45,7 @@ class Test extends TestCase
 			$this->markTestSkipped('Cannot measure peak memory because the reference value is too high');
 		}
 
-		$decoded = Bencode::decode($str);
+		$decoded = Decoder::decode($str);
 		$after   = memory_get_peak_usage();
 		$delta   = $after - $before;
 
@@ -72,7 +74,7 @@ class Test extends TestCase
 			$this->markTestSkipped('Cannot measure peak memory because the reference value is too high');
 		}
 
-		$decoded  = Bencode::decode($str);
+		$decoded  = Decoder::decode($str);
 		$after    = memory_get_peak_usage();
 		$delta    = $after - $before;
 		$overhead = $delta - $len;
@@ -83,128 +85,11 @@ class Test extends TestCase
 	}
 
 	/**
-	* @dataProvider getEncodeTests
-	*/
-	public function testEncode($bencoded, $value)
-	{
-		$this->assertSame($bencoded, Bencode::encode($value));
-	}
-
-	public static function getEncodeTests()
-	{
-		return [
-			[
-				'i22e',
-				22
-			],
-			[
-				'i22e',
-				(double) 22.0
-			],
-			[
-				'i1e',
-				true
-			],
-			[
-				'i0e',
-				false
-			],
-			[
-				'i-1e',
-				-1
-			],
-			[
-				'le',
-				[]
-			],
-			[
-				'de',
-				new stdClass
-			],
-			[
-				'de',
-				new foo
-			],
-			[
-				'd3:fooi1ee',
-				['foo' => 1]
-			],
-			[
-				'd3:fooi1ee',
-				(object) ['foo' => 1]
-			],
-			[
-				'd3:bari2e3:fooi1ee',
-				['foo' => 1, 'bar' => 2]
-			],
-			[
-				'd3:fool1:a1:b1:cee',
-				['foo' => ['a', 'b', 'c']]
-			],
-			[
-				'd0:l1:a1:b1:cee',
-				['' => ['a', 'b', 'c']]
-			],
-			[
-				'd3:food3:bari1ee1:xd1:yi1eee',
-				new ArrayObject([
-					'foo' => new ArrayObject(['bar' => 1]),
-					'x'   => new ArrayObject(['y' => 1])
-				])
-			],
-			[
-				'd1:0i0e1:1i1ee',
-				[1 => 1, 0 => 0]
-			],
-			[
-				'd2:11i11e1:5i5ee',
-				[5 => 5, 11 => 11]
-			],
-			[
-				'i1000000000e',
-				1000000000
-			],
-		];
-	}
-
-	/**
-	* @dataProvider getEncodeInvalidTests
-	*/
-	public function testEncodeInvalid($input)
-	{
-		$this->expectException(EncodingException::class);
-		$this->expectExceptionMessage('Unsupported value');
-
-		try
-		{
-			$this->assertNull(Bencode::encode($input));
-		}
-		catch (EncodingException $e)
-		{
-			$this->assertSame($input, $e->getValue());
-
-			throw $e;
-		}
-	}
-
-	public static function getEncodeInvalidTests()
-	{
-		$fp = fopen('php://stdin', 'rb');
-		fclose($fp);
-
-		return [
-			[function(){}],
-			[1.2],
-			[$fp],
-		];
-	}
-
-	/**
 	* @dataProvider getDecodeTests
 	*/
 	public function testDecode($bencoded, $value)
 	{
-		$this->assertEquals($value, Bencode::decode($bencoded));
+		$this->assertEquals($value, Decoder::decode($bencoded));
 	}
 
 	public static function getDecodeTests()
@@ -306,7 +191,7 @@ class Test extends TestCase
 
 		try
 		{
-			$this->assertNull(Bencode::decode($input));
+			$this->assertNull(Decoder::decode($input));
 		}
 		catch (DecodingException $e)
 		{
@@ -320,7 +205,7 @@ class Test extends TestCase
 		return [
 			[
 				null,
-				new TypeError(Bencode::class . '::decode(): Argument #1 ($bencoded) must be of type string, null given')
+				new TypeError(Decoder::class . '::decode(): Argument #1 ($bencoded) must be of type string, null given')
 			],
 			[
 				'',
@@ -490,98 +375,18 @@ class Test extends TestCase
 	}
 
 	/**
-	* @dataProvider getDecodeNonComformantTests
+	* @dataProvider getDecodeNonCompliantTests
 	*/
-	public function testDecodeNonComformant($input, $nonCompliantValue, $exception)
+	public function testDecodeNonCompliant($input, $nonCompliantValue, $exception)
 	{
 		$this->expectException(get_class($exception));
 		$this->expectExceptionMessage($exception->getMessage());
-		$this->assertNull(Bencode::decode($input));
-	}
-
-	/**
-	* @dataProvider getDecodeNonComformantTests
-	*/
-	public function testDecodeRelaxed($input, $nonCompliantValue, $exception)
-	{
-		$actual       = Bencode::decodeNonCompliant($input);
-		$assertMethod = (is_object($nonCompliantValue)) ? 'assertEquals' : 'assertSame';
-
-		$this->$assertMethod($nonCompliantValue, $actual);
-
-		if ($nonCompliantValue instanceof ArrayObject)
-		{
-			$this->assertSame(
-				array_keys($nonCompliantValue->getArrayCopy()),
-				array_keys($actual->getArrayCopy())
-			);
-		}
-	}
-
-	public static function getDecodeNonComformantTests()
-	{
-		return [
-			[
-				'3:abcd',
-				'abc',
-				new ComplianceError('Superfluous content', 5)
-			],
-			[
-				'3:abci',
-				'abc',
-				new ComplianceError('Superfluous content', 5)
-			],
-			[
-				'3:abc3:abc',
-				'abc',
-				new ComplianceError('Superfluous content', 5)
-			],
-			[
-				'i0123e',
-				123,
-				new ComplianceError('Illegal character', 2)
-			],
-			[
-				'i00e',
-				0,
-				new ComplianceError('Illegal character', 2)
-			],
-			[
-				'i-0e',
-				0,
-				new ComplianceError('Illegal character', 2)
-			],
-			[
-				'01:a',
-				'a',
-				new ComplianceError('Illegal character', 1)
-			],
-			[
-				'd3:fooi0e3:foo3:abce',
-				new ArrayObject(['foo' => 'abc']),
-				new ComplianceError("Duplicate dictionary entry 'foo'", 9)
-			],
-			[
-				'd4:abcdi0e4:abcdli0eee',
-				new ArrayObject(['abcd' => [0]]),
-				new ComplianceError("Duplicate dictionary entry 'abcd'", 10)
-			],
-			[
-				'd3:fooi0e3:bar3:abce',
-				new ArrayObject(['bar' => 'abc', 'foo' => 0]),
-				new ComplianceError("Out of order dictionary entry 'bar'", 9)
-			],
-			[
-				'd1:5i0e2:11i0ee',
-				new ArrayObject(['11' => 0, '5' => 0]),
-				new ComplianceError("Out of order dictionary entry '11'", 7)
-			],
-		];
+		$this->assertNull(Decoder::decode($input));
 	}
 
 	public function testDecodeDictionaryAccess()
 	{
-		$dict = Bencode::decode('d3:bar4:spam3:fooi42ee');
+		$dict = Decoder::decode('d3:bar4:spam3:fooi42ee');
 
 		$this->assertSame('spam', $dict->bar);
 		$this->assertSame(42,     $dict['foo']);
@@ -599,10 +404,6 @@ class Test extends TestCase
 		$this->expectException('TypeError');
 		FaultyDecoder::decode('1:x');
 	}
-}
-
-class foo extends stdClass
-{
 }
 
 class FaultyDecoder extends Decoder
