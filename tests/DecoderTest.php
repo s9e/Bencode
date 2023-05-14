@@ -27,6 +27,11 @@ class DecoderTest extends TestCase
 	*/
 	public function testMemoryList()
 	{
+		if (is_callable('memory_reset_peak_usage'))
+		{
+			memory_reset_peak_usage();
+		}
+
 		$len = 10000;
 		$str = str_repeat('i0e', $len + 2);
 
@@ -58,6 +63,10 @@ class DecoderTest extends TestCase
 	*/
 	public function testMemoryString()
 	{
+		if (is_callable('memory_reset_peak_usage'))
+		{
+			memory_reset_peak_usage();
+		}
 		$reference = memory_get_peak_usage();
 
 		// Create a bencoded value that will be decoded into a string that is 2e6 characters long.
