@@ -66,15 +66,8 @@ class Decoder
 	/**
 	* Cast given string as an integer and check for clamping
 	*/
-	protected function castInteger(string $string, bool $negative): int
+	protected function castInteger(string $string, int $clamp): int
 	{
-		$clamp = PHP_INT_MAX;
-		if ($negative)
-		{
-			$string = "-$string";
-			$clamp  = PHP_INT_MIN;
-		}
-
 		$value = (int) $string;
 		if ($value === $clamp && is_float(+$string))
 		{
@@ -202,13 +195,23 @@ class Decoder
 
 	protected function decodeInteger(): int
 	{
-		$negative = ($this->bencoded[++$this->offset] === '-');
-		if ($negative && $this->bencoded[++$this->offset] === '0')
+		if ($this->bencoded[++$this->offset] === '-')
 		{
-			$this->complianceError('Illegal character', $this->offset);
+			if ($this->bencoded[++$this->offset] === '0')
+			{
+				$this->complianceError('Illegal character', $this->offset);
+			}
+
+			$clamp  = PHP_INT_MIN;
+			$digits = '-' . $this->readDigits('e');
+		}
+		else
+		{
+			$clamp  = PHP_INT_MAX;
+			$digits = $this->readDigits('e');
 		}
 
-		return $this->castInteger($this->readDigits('e'), $negative);
+		return $this->castInteger($digits, $clamp);
 	}
 
 	protected function decodeList(): array
