@@ -381,7 +381,7 @@ class DecoderTest extends TestCase
 	{
 		$this->expectException(get_class($exception));
 		$this->expectExceptionMessage($exception->getMessage());
-		$this->assertNull(Decoder::decode($input));
+		Decoder::decode($input);
 	}
 
 	public function testDecodeDictionaryAccess()
@@ -399,19 +399,35 @@ class DecoderTest extends TestCase
 		$this->assertSame(['bar' => 'spam', 'foo' => 42], $actual);
 	}
 
-	public function testFaultyDecoder()
+	public function testFaultyStringDecoderDecoder()
 	{
 		$this->expectException('TypeError');
-		FaultyDecoder::decode('1:x');
+		FaultyStringDecoder::decode('1:x');
+	}
+
+	public function testFaultyDictionaryDecoderDecoder()
+	{
+		$this->expectException('TypeError');
+		FaultyDictionaryDecoder::decode('d1:xi1ee');
 	}
 }
 
-class FaultyDecoder extends Decoder
+class FaultyStringDecoder extends Decoder
 {
 	protected function decodeString(): string
 	{
 		$this->offset = 1.2;
 
 		return '?';
+	}
+}
+
+class FaultyDictionaryDecoder extends Decoder
+{
+	protected function decodeDictionary(): ArrayObject
+	{
+		$this->offset = PHP_INT_MAX;
+
+		return parent::decodeDictionary();
 	}
 }

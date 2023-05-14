@@ -31,4 +31,12 @@ class NonCompliantDecoderTest extends TestCase
 			);
 		}
 	}
+
+	public function testDecodeCompliantDictionary()
+	{
+		$this->assertEquals(
+			new ArrayObject(['a' => 1, 'b' => 2]),
+			NonCompliantDecoder::decode('d1:ai1e1:bi2ee')
+		);
+	}
 }

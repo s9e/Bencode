@@ -90,8 +90,9 @@ class Decoder
 		{
 			throw match (substr($this->bencoded, 0, 1))
 			{
-				'-', 'e' => new DecodingException('Illegal character',     0),
 				''       => new DecodingException('Premature end of data', 0),
+				'-'      => new DecodingException('Illegal character',     0),
+				'e'      => new DecodingException('Illegal character',     0),
 				default  => new DecodingException('Premature end of data', $this->len - 1)
 			};
 		}
@@ -122,8 +123,9 @@ class Decoder
 	protected static function convertTypeError(TypeError $e, int $offset): Throwable
 	{
 		// A type error can occur in decodeString() if the string length exceeds an int
-		$frame = $e->getTrace()[0];
-		if ($frame['class'] === __CLASS__ && $frame['function'] === 'decodeString')
+		$frame  = $e->getTrace()[0];
+		$caller = $frame['class'] . $frame['type'] . $frame['function'];
+		if ($caller === __CLASS__ . '->decodeString')
 		{
 			return new DecodingException('String length overflow', $offset - 1);
 		}
