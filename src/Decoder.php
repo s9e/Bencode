@@ -203,15 +203,15 @@ class Decoder
 			}
 
 			$clamp  = PHP_INT_MIN;
-			$digits = '-' . $this->readDigits('e');
+			$string = '-' . $this->readDigits('e');
 		}
 		else
 		{
 			$clamp  = PHP_INT_MAX;
-			$digits = $this->readDigits('e');
+			$string = $this->readDigits('e');
 		}
 
-		return $this->castInteger($digits, $clamp);
+		return $this->castInteger($string, $clamp);
 	}
 
 	protected function decodeList(): array
