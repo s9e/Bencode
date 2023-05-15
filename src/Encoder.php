@@ -9,7 +9,7 @@ namespace s9e\Bencode;
 
 use ArrayObject;
 use const SORT_STRING;
-use function array_is_list, get_object_vars, is_array, is_bool, is_float, is_int, is_object, is_string, ksort, strlen;
+use function array_is_list, array_map, get_object_vars, implode, is_array, is_bool, is_float, is_int, is_object, is_string, ksort, strlen;
 use s9e\Bencode\Exceptions\EncodingException;
 use stdClass;
 
@@ -93,14 +93,7 @@ class Encoder
 
 	protected static function encodeIndexedArray(array $array): string
 	{
-		$str = 'l';
-		foreach ($array as $v)
-		{
-			$str .= static::encode($v);
-		}
-		$str .= 'e';
-
-		return $str;
+		return 'l' . implode('', array_map(static::class . '::encode', $array)) . 'e';
 	}
 
 	protected static function encodeObject(object $value): string
