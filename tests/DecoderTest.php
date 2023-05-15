@@ -117,6 +117,10 @@ class DecoderTest extends TestCase
 				0
 			],
 			[
+				'i1e',
+				1
+			],
+			[
 				'i' . PHP_INT_MAX . 'e',
 				PHP_INT_MAX
 			],

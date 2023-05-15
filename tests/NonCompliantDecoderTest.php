@@ -4,9 +4,11 @@ namespace s9e\Bencode\Tests;
 
 use ArrayObject;
 use PHPUnit\Framework\TestCase;
+use s9e\Bencode\Exceptions\DecodingException;
 use s9e\Bencode\NonCompliantDecoder;
 
 /**
+* @covers s9e\Bencode\Decoder
 * @covers s9e\Bencode\NonCompliantDecoder
 */
 class NonCompliantDecoderTest extends TestCase
@@ -38,5 +40,34 @@ class NonCompliantDecoderTest extends TestCase
 			new ArrayObject(['a' => 1, 'b' => 2]),
 			NonCompliantDecoder::decode('d1:ai1e1:bi2ee')
 		);
+	}
+
+	/**
+	* @dataProvider getDecodeInvalidTests
+	*/
+	public function testDecodeInvalid($input, $expected)
+	{
+		$this->expectException(get_class($expected));
+		$this->expectExceptionMessage($expected->getMessage());
+
+		try
+		{
+			$this->assertNull(NonCompliantDecoder::decode($input));
+		}
+		catch (DecodingException $e)
+		{
+			$this->assertEquals($expected->getOffset(), $e->getOffset());
+			throw $e;
+		}
+	}
+
+	public static function getDecodeInvalidTests()
+	{
+		return [
+			[
+				'i001x',
+				new DecodingException('Illegal character', 4)
+			],
+		];
 	}
 }

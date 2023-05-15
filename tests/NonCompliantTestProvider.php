@@ -31,13 +31,18 @@ trait NonCompliantTestProvider
 				new ComplianceError('Illegal character', 2)
 			],
 			[
-				'i00e',
-				0,
+				'i0012e',
+				12,
 				new ComplianceError('Illegal character', 2)
 			],
 			[
 				'i-0e',
 				0,
+				new ComplianceError('Illegal character', 2)
+			],
+			[
+				'i-012e',
+				-12,
 				new ComplianceError('Illegal character', 2)
 			],
 			[
