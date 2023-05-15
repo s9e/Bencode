@@ -9,7 +9,7 @@ namespace s9e\Bencode;
 
 use ArrayObject;
 use const SORT_STRING;
-use function array_is_list, array_map, get_object_vars, implode, is_array, is_bool, is_float, is_int, is_object, is_string, ksort, strlen;
+use function array_is_list, array_map, get_object_vars, gettype, implode, ksort, strlen;
 use s9e\Bencode\Exceptions\EncodingException;
 use stdClass;
 
@@ -17,24 +17,14 @@ class Encoder
 {
 	public static function encode($value): string
 	{
-		if (is_string($value))
+		return match (gettype($value))
 		{
-			return strlen($value) . ':' . $value;
-		}
-		if (is_array($value))
-		{
-			return static::encodeArray($value);
-		}
-		if (is_int($value))
-		{
-			return "i{$value}e";
-		}
-		if (is_object($value))
-		{
-			return static::encodeObject($value);
-		}
-
-		return static::encode(static::coerceUnsupportedValue($value));
+			'array'   => static::encodeArray($value),
+			'integer' => "i{$value}e",
+			'object'  => static::encodeObject($value),
+			'string'  => strlen($value) . ':' . $value,
+			default   => static::encode(static::coerceUnsupportedValue($value))
+		};
 	}
 
 	protected static function coerceBool(bool $value): int
@@ -55,16 +45,12 @@ class Encoder
 
 	protected static function coerceUnsupportedValue($value): array|int|string
 	{
-		if (is_float($value))
+		return match (gettype($value))
 		{
-			return static::coerceFloat($value);
-		}
-		if (is_bool($value))
-		{
-			return static::coerceBool($value);
-		}
-
-		throw new EncodingException('Unsupported value', $value);
+			'boolean' => static::coerceBool($value),
+			'double'  => static::coerceFloat($value),
+			default   => throw new EncodingException('Unsupported value', $value)
+		};
 	}
 
 	/**
