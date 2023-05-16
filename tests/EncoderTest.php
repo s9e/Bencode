@@ -117,7 +117,14 @@ class EncoderTest extends TestCase
 		}
 		catch (EncodingException $e)
 		{
-			$this->assertSame($input, $e->getValue());
+			if (is_float($input) && is_nan($input))
+			{
+				$this->assertNan($e->getValue());
+			}
+			else
+			{
+				$this->assertSame($input, $e->getValue());
+			}
 
 			throw $e;
 		}
@@ -132,6 +139,8 @@ class EncoderTest extends TestCase
 			[function(){}],
 			[1.2],
 			[$fp],
+			[INF],
+			[NAN]
 		];
 	}
 }
