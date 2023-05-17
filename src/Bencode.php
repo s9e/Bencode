@@ -21,7 +21,7 @@ class Bencode
 		return NonCompliantDecoder::decode($bencoded);
 	}
 
-	public static function encode($value): string
+	public static function encode(mixed $value): string
 	{
 		return Encoder::encode($value);
 	}

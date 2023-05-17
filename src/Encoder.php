@@ -15,7 +15,7 @@ use stdClass;
 
 class Encoder
 {
-	public static function encode($value): string
+	public static function encode(mixed $value): string
 	{
 		return match (gettype($value))
 		{
@@ -43,7 +43,7 @@ class Encoder
 		throw new EncodingException('Unsupported value', $value);
 	}
 
-	protected static function coerceUnsupportedValue($value): array|int|string
+	protected static function coerceUnsupportedValue(mixed $value): array|int|string
 	{
 		return match (gettype($value))
 		{
