@@ -7,14 +7,16 @@
 */
 namespace s9e\Bencode;
 
+use ArrayObject;
+
 class Bencode
 {
-	public static function decode(string $bencoded)
+	public static function decode(string $bencoded): ArrayObject|array|int|string
 	{
 		return Decoder::decode($bencoded);
 	}
 
-	public static function decodeNonCompliant(string $bencoded)
+	public static function decodeNonCompliant(string $bencoded): ArrayObject|array|int|string
 	{
 		return NonCompliantDecoder::decode($bencoded);
 	}
