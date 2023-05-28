@@ -9,7 +9,7 @@ namespace s9e\Bencode;
 
 use ArrayObject;
 use const SORT_STRING, false, true;
-use function strcmp;
+use function preg_match, strcmp, strlen;
 
 class NonCompliantDecoder extends Decoder
 {
@@ -40,5 +40,17 @@ class NonCompliantDecoder extends Decoder
 	protected function dictionaryComplianceError(string $key, string $lastKey): void
 	{
 		$this->sortDictionary = true;
+	}
+
+	protected function readDigits(string $terminator): string
+	{
+		if ($this->bencoded[$this->offset] === '0')
+		{
+			// Skip past the trailing zeroes and stop at the next digit or the last zero
+			preg_match('(0++[1-9]?)A', $this->bencoded, $m, 0, $this->offset);
+			$this->offset += strlen($m[0]) - 1;
+		}
+
+		return parent::readDigits($terminator);
 	}
 }

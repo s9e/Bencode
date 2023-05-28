@@ -269,6 +269,10 @@ class DecoderTest extends TestCase
 				new DecodingException('Illegal character', 2)
 			],
 			[
+				'i0x',
+				new DecodingException('Illegal character', 2)
+			],
+			[
 				'lxe',
 				new DecodingException('Illegal character', 1)
 			],

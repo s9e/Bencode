@@ -252,6 +252,13 @@ class Decoder
 		$this->complianceError($msg . " dictionary entry '" . $key . "'", $offset);
 	}
 
+	protected function digitException(): DecodingException
+	{
+		return (str_contains('0123456789', $this->bencoded[$this->offset]))
+		     ? new ComplianceError('Illegal character', $this->offset)
+		     : new DecodingException('Illegal character', $this->offset);
+	}
+
 	/**
 	* Return the rightmost boundary to the last safe character that can start a value
 	*
@@ -276,23 +283,26 @@ class Decoder
 
 	protected function readDigits(string $terminator): string
 	{
-		// Digits sorted by decreasing frequency as observed on a random sample of torrent files
-		$spn = strspn($this->bencoded, '1463720859', $this->offset);
-		if ($spn === 0)
+		if ($this->bencoded[$this->offset] === '0')
 		{
-			throw new DecodingException('Illegal character', $this->offset);
+			++$this->offset;
+			$string = '0';
+		}
+		else
+		{
+			// Digits sorted by decreasing frequency as observed on a random sample of torrent files
+			$spn = strspn($this->bencoded, '1463720859', $this->offset);
+			if ($spn === 0)
+			{
+				throw new DecodingException('Illegal character', $this->offset);
+			}
+			$string = substr($this->bencoded, $this->offset, $spn);
+			$this->offset += $spn;
 		}
 
-		$string = substr($this->bencoded, $this->offset, $spn);
-		if ($string[0] === '0' && $spn !== 1)
-		{
-			$this->complianceError('Illegal character', 1 + $this->offset);
-		}
-
-		$this->offset += $spn;
 		if ($this->bencoded[$this->offset] !== $terminator)
 		{
-			throw new DecodingException('Illegal character', $this->offset);
+			throw $this->digitException();
 		}
 		++$this->offset;
 
