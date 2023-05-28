@@ -9,7 +9,7 @@ namespace s9e\Bencode;
 
 use ArrayObject;
 use const SORT_STRING;
-use function array_is_list, get_object_vars, ksort, strlen;
+use function array_is_list, get_object_vars, gettype, ksort, strlen;
 use s9e\Bencode\Exceptions\EncodingException;
 use stdClass;
 

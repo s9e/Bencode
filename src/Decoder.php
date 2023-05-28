@@ -11,7 +11,7 @@ use ArrayObject;
 use Throwable;
 use TypeError;
 use const PHP_INT_MAX, PHP_INT_MIN, false;
-use function is_float, str_contains, strcmp, strlen, strspn, substr, substr_compare;
+use function is_float, preg_match, str_contains, str_ends_with, strcmp, strlen, strspn, substr, substr_compare;
 use s9e\Bencode\Exceptions\ComplianceError;
 use s9e\Bencode\Exceptions\DecodingException;
 
