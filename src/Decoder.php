@@ -266,19 +266,14 @@ class Decoder
 	*/
 	protected function getSafeBoundary(): int
 	{
-		$boundary = $this->len - 1;
-		do
+		if (str_ends_with($this->bencoded, 'e'))
 		{
-			$c = substr($this->bencoded, $boundary, 1);
+			return $this->len - 1;
 		}
-		while (str_contains('0123456789', $c) && --$boundary >= 0);
 
-		return match ($c)
-		{
-			'-'     => $boundary - 2,
-			'i'     => $boundary - 1,
-			default => $boundary
-		};
+		preg_match('(i?-?[0-9]*+$)D', $this->bencoded, $m);
+
+		return $this->len - 1 - strlen($m[0] ?? '');
 	}
 
 	protected function readDigits(string $terminator): string
