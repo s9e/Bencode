@@ -55,7 +55,7 @@ class Decoder
 	/**
 	* @param string $bencoded Bencoded string being decoded
 	*/
-	protected function __construct(protected readonly string $bencoded)
+	final protected function __construct(protected readonly string $bencoded)
 	{
 		$this->len = strlen($bencoded);
 		$this->max = $this->getSafeBoundary();
