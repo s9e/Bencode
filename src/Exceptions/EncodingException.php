@@ -14,9 +14,9 @@ class EncodingException extends InvalidArgumentException
 	/**
 	* @var mixed Value that caused this exception to be thrown
 	*/
-	protected $value;
+	protected mixed $value;
 
-	public function __construct(string $message, $value)
+	public function __construct(string $message, mixed $value)
 	{
 		$this->value = $value;
 		parent::__construct($message);
