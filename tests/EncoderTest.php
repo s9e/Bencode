@@ -3,6 +3,7 @@
 namespace s9e\Bencode\Tests;
 
 use ArrayObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 use s9e\Bencode\Encoder;
@@ -14,9 +15,7 @@ use stdClass;
 */
 class EncoderTest extends TestCase
 {
-	/**
-	* @dataProvider getEncodeTests
-	*/
+	#[DataProvider('getEncodeTests')]
 	public function testEncode($bencoded, $value)
 	{
 		$this->assertSame($bencoded, Encoder::encode($value));
@@ -103,9 +102,7 @@ class EncoderTest extends TestCase
 		];
 	}
 
-	/**
-	* @dataProvider getEncodeInvalidTests
-	*/
+	#[DataProvider('getEncodeInvalidTests')]
 	public function testEncodeInvalid($input)
 	{
 		$this->expectException(EncodingException::class);

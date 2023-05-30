@@ -3,6 +3,7 @@
 namespace s9e\Bencode\Tests;
 
 use ArrayObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use s9e\Bencode\Exceptions\DecodingException;
 use s9e\Bencode\NonCompliantDecoder;
@@ -15,9 +16,7 @@ class NonCompliantDecoderTest extends TestCase
 {
 	use NonCompliantTestProvider;
 
-	/**
-	* @dataProvider getDecodeNonCompliantTests
-	*/
+	#[DataProvider('getDecodeNonCompliantTests')]
 	public function testDecodeRelaxed($input, $nonCompliantValue, $exception)
 	{
 		$actual       = NonCompliantDecoder::decode($input);
@@ -42,9 +41,7 @@ class NonCompliantDecoderTest extends TestCase
 		);
 	}
 
-	/**
-	* @dataProvider getDecodeInvalidTests
-	*/
+	#[DataProvider('getDecodeInvalidTests')]
 	public function testDecodeInvalid($input, $expected)
 	{
 		$this->expectException(get_class($expected));

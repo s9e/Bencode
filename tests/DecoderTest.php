@@ -3,6 +3,7 @@
 namespace s9e\Bencode\Tests;
 
 use ArrayObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 use s9e\Bencode\Decoder;
@@ -93,9 +94,7 @@ class DecoderTest extends TestCase
 		$this->assertEquals($len, strlen($decoded));
 	}
 
-	/**
-	* @dataProvider getDecodeTests
-	*/
+	#[DataProvider('getDecodeTests')]
 	public function testDecode($bencoded, $value)
 	{
 		$this->assertEquals($value, Decoder::decode($bencoded));
@@ -194,9 +193,7 @@ class DecoderTest extends TestCase
 		];
 	}
 
-	/**
-	* @dataProvider getDecodeInvalidTests
-	*/
+	#[DataProvider('getDecodeInvalidTests')]
 	public function testDecodeInvalid($input, $expected)
 	{
 		$this->expectException(get_class($expected));
@@ -391,9 +388,7 @@ class DecoderTest extends TestCase
 		];
 	}
 
-	/**
-	* @dataProvider getDecodeNonCompliantTests
-	*/
+	#[DataProvider('getDecodeNonCompliantTests')]
 	public function testDecodeNonCompliant($input, $nonCompliantValue, $exception)
 	{
 		$this->expectException(get_class($exception));
