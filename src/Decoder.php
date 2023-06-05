@@ -165,12 +165,11 @@ class Decoder
 			{
 				$this->dictionaryComplianceError($key, $lastKey);
 			}
-			if ($this->offset > $this->max)
+			if ($this->offset <= $this->max)
 			{
-				break;
+				$values[$key] = $this->decodeAnything();
+				$lastKey      = $key;
 			}
-			$values[$key] = $this->decodeAnything();
-			$lastKey      = $key;
 		}
 
 		throw new DecodingException('Premature end of data', $this->len - 1);
