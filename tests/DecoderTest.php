@@ -389,6 +389,10 @@ class DecoderTest extends TestCase
 				'd4:pathd',
 				new DecodingException('Premature end of data', 7)
 			],
+			[
+				'ld1',
+				new DecodingException('Premature end of data', 2)
+			],
 		];
 	}
 
