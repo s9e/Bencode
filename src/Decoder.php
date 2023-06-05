@@ -161,7 +161,7 @@ class Decoder
 				'6'     => $this->decodeFastString('6:length', 8, 'length'),
 				default => $this->decodeString()
 			};
-			if (isset($lastKey) && strcmp($key, $lastKey) <= 0)
+			if (isset($lastKey) && strcmp($lastKey, $key) >= 0)
 			{
 				$this->dictionaryComplianceError($key, $lastKey);
 			}
