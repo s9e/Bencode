@@ -13,7 +13,6 @@
          displayDetailsOnTestsThatTriggerWarnings="true"
          stopOnFailure="false"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.1/phpunit.xsd">
-	<coverage pathCoverage="true"/>
 	<source>
 		<include>
 			<directory suffix=".php">src</directory>
