@@ -190,6 +190,10 @@ class DecoderTest extends TestCase
 				'd6:Lengthi1e4:Pathi2e6:lengthi3e4:pathi4ee',
 				new ArrayObject(['Length' => 1, 'Path' => 2, 'length' => 3, 'path' => 4])
 			],
+			[
+				'd8:announcei1e8:xxxxxxxx8:xxxxxxxxe',
+				new ArrayObject(['announce' => 1, 'xxxxxxxx' => 'xxxxxxxx'])
+			],
 		];
 	}
 
