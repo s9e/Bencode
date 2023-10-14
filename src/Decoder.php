@@ -10,7 +10,7 @@ namespace s9e\Bencode;
 use ArrayObject;
 use Throwable;
 use TypeError;
-use const PHP_INT_MAX, PHP_INT_MIN, false;
+use const PHP_INT_MAX, PHP_INT_MIN;
 use function is_int, preg_match, str_contains, str_ends_with, strcmp, strlen, strspn, substr, substr_compare;
 use s9e\Bencode\Exceptions\ComplianceError;
 use s9e\Bencode\Exceptions\DecodingException;
