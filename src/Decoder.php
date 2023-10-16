@@ -190,6 +190,13 @@ class Decoder
 
 			return $value;
 		}
+		if ($this->bencoded[$this->offset + 1] === ':')
+		{
+			$value = substr($this->bencoded, $this->offset + 2, $len - 2);
+			$this->offset += $len;
+
+			return $value;
+		}
 
 		return $this->decodeString();
 	}

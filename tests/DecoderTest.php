@@ -194,6 +194,10 @@ class DecoderTest extends TestCase
 				'd8:announcei1e8:xxxxxxxx8:xxxxxxxxe',
 				new ArrayObject(['announce' => 1, 'xxxxxxxx' => 'xxxxxxxx'])
 			],
+			[
+				'd4:pathi0e40:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxi1ee',
+				new ArrayObject(['path' => 0, 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' => 1])
+			],
 		];
 	}
 
@@ -392,6 +396,10 @@ class DecoderTest extends TestCase
 			[
 				'd4:pathd',
 				new DecodingException('Premature end of data', 7)
+			],
+			[
+				'd4',
+				new DecodingException('Premature end of data', 1)
 			],
 			[
 				'ld1',
