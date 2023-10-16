@@ -160,6 +160,7 @@ class Decoder
 				'4'     => $this->decodeFastString('4:path',      6, 'path'    ),
 				'6'     => $this->decodeFastString('6:length',    8, 'length'  ),
 				'8'     => $this->decodeFastString('8:announce', 10, 'announce'),
+				'5'     => $this->decodeFastString('5:files',     7, 'files'   ),
 				default => $this->decodeString()
 			};
 			if (isset($lastKey) && strcmp($lastKey, $key) >= 0)
