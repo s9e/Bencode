@@ -23,8 +23,12 @@ print_r(Bencode::decode('d3:bar4:spam3:fooi42ee'));
 ```
 ArrayObject Object
 (
-    [bar] => spam
-    [foo] => 42
+    [storage:ArrayObject:private] => Array
+        (
+            [bar] => spam
+            [foo] => 42
+        )
+
 )
 ```
 
@@ -36,6 +40,33 @@ print_r(Bencode::encode(['foo' => 42, 'bar' => 'spam']));
 ```
 ```
 d3:bar4:spam3:fooi42ee
+```
+
+Supported types are as follow:
+
+ - `array`, `int`, and `string` values are encoded natively.
+ - `float` values that can be losslessly converted to integers are coerced to `int`.
+ - `bool` values are coerced to `int`.
+ - An object that implements `s9e\Bencode\BencodeSerializable` is encoded as the value returned by its `bencodeSerialize()` method.
+ - The properties of an `stdClass` object are encoded in a dictionary.
+ - An instance of `ArrayObject` is treated as an array.
+
+```php
+use s9e\Bencode\Bencode;
+use s9e\Bencode\BencodeSerializable;
+
+$bencodable = new class implements BencodeSerializable
+{
+	public function bencodeSerialize(): array|int|string
+	{
+		return 42;
+	}
+};
+
+print_r(Bencode::encode($bencodable));
+```
+```
+i42e
 ```
 
 #### Handle exceptions

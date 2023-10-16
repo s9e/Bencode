@@ -6,6 +6,7 @@ use ArrayObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use TypeError;
+use s9e\Bencode\BencodeSerializable;
 use s9e\Bencode\Encoder;
 use s9e\Bencode\Exceptions\EncodingException;
 use stdClass;
@@ -59,6 +60,16 @@ class EncoderTest extends TestCase
 			[
 				'de',
 				new class extends stdClass {}
+			],
+			[
+				'i42e',
+				new class implements BencodeSerializable
+				{
+					public function bencodeSerialize(): array|int|string
+					{
+						return 42;
+					}
+				}
 			],
 			[
 				'd3:fooi1ee',

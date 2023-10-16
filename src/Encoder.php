@@ -91,6 +91,10 @@ class Encoder
 
 	protected static function encodeObject(object $value): string
 	{
+		if ($value instanceof BencodeSerializable)
+		{
+			return static::encode($value->bencodeSerialize());
+		}
 		if ($value instanceof ArrayObject)
 		{
 			return static::encodeAssociativeArray($value->getArrayCopy());
