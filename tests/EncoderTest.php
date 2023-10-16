@@ -58,7 +58,7 @@ class EncoderTest extends TestCase
 			],
 			[
 				'de',
-				new foo
+				new class extends stdClass {}
 			],
 			[
 				'd3:fooi1ee',
@@ -140,8 +140,4 @@ class EncoderTest extends TestCase
 			[NAN]
 		];
 	}
-}
-
-class foo extends stdClass
-{
 }
