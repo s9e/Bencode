@@ -10,7 +10,7 @@ namespace s9e\Bencode;
 interface BencodeSerializable
 {
 	/**
-	* Serialize this object that can be encoded with Bencode::encode()
+	* Serialize this object to a value that can be encoded with Bencode::encode()
 	*
 	* @return array|int|string
 	*/
