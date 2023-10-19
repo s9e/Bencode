@@ -6,6 +6,7 @@ $fuzzer->setTarget(
 	function (string $input)
 	{
 		s9e\Bencode\Bencode::decode($input);
+		s9e\Bencode\Bencode::decodeNonCompliant($input);
 	}
 );
 $fuzzer->addDictionary(__DIR__ . '/dict.txt');

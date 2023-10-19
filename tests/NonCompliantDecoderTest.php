@@ -17,7 +17,7 @@ class NonCompliantDecoderTest extends TestCase
 	use NonCompliantTestProvider;
 
 	#[DataProvider('getDecodeNonCompliantTests')]
-	public function testDecodeRelaxed($input, $nonCompliantValue, $exception)
+	public function testDecodeNonCompliant($input, $nonCompliantValue, $exception)
 	{
 		$actual       = NonCompliantDecoder::decode($input);
 		$assertMethod = (is_object($nonCompliantValue)) ? 'assertEquals' : 'assertSame';
@@ -64,6 +64,18 @@ class NonCompliantDecoderTest extends TestCase
 			[
 				'i001x',
 				new DecodingException('Illegal character', 4)
+			],
+			[
+				'diee',
+				new DecodingException('Illegal character', 2)
+			],
+			[
+				'dxe',
+				new DecodingException('Illegal character', 1)
+			],
+			[
+				'd87e',
+				new DecodingException('Illegal character', 3)
 			],
 		];
 	}

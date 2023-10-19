@@ -10,6 +10,7 @@ namespace s9e\Bencode;
 use ArrayObject;
 use const SORT_STRING, false, true;
 use function preg_match, strcmp, strlen;
+use s9e\Bencode\Exceptions\DecodingException;
 
 class NonCompliantDecoder extends Decoder
 {
@@ -35,6 +36,16 @@ class NonCompliantDecoder extends Decoder
 		$this->sortDictionary = $previousState;
 
 		return $dictionary;
+	}
+
+	protected function decodeString(): string
+	{
+		if ($this->bencoded[$this->offset] === 'i')
+		{
+			return (string) $this->decodeInteger();
+		}
+
+		return parent::decodeString();
 	}
 
 	protected function dictionaryComplianceError(string $key, string $lastKey): void

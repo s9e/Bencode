@@ -4,6 +4,7 @@ namespace s9e\Bencode\Tests;
 
 use ArrayObject;
 use s9e\Bencode\Exceptions\ComplianceError;
+use s9e\Bencode\Exceptions\DecodingException;
 
 trait NonCompliantTestProvider
 {
@@ -69,6 +70,11 @@ trait NonCompliantTestProvider
 				'd1:5i0e2:11i0ee',
 				new ArrayObject(['11' => 0, '5' => 0]),
 				new ComplianceError("Out of order dictionary entry '11'", 7)
+			],
+			[
+				'di42e3:fooe',
+				new ArrayObject(['42' => 'foo']),
+				new DecodingException('Illegal character', 1)
 			],
 		];
 	}

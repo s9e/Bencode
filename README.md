@@ -107,6 +107,7 @@ By default, the decoder rejects non-compliant input with a `ComplianceError` exc
 
  - Unordered dictionaries are automatically sorted.
  - Duplicate entries in dictionaries overwrite prior entries.
+ - Integers used as dictionary keys are converted to strings.
  - Leading `0`s are removed from integers.
  - Negative zero is converted to `0`.
  - Trailing junk at the end of the input is ignored.
