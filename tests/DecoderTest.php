@@ -402,6 +402,18 @@ class DecoderTest extends TestCase
 				new DecodingException('Premature end of data', 1)
 			],
 			[
+				'd0',
+				new DecodingException('Premature end of data', 1)
+			],
+			[
+				'd',
+				new DecodingException('Premature end of data', 0)
+			],
+			[
+				'dd',
+				new DecodingException('Illegal character', 1)
+			],
+			[
 				'ld1',
 				new DecodingException('Premature end of data', 2)
 			],
