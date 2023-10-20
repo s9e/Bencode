@@ -262,7 +262,8 @@ class Decoder
 
 	protected function digitException(): DecodingException
 	{
-		return (str_contains('0123456789', $this->bencoded[$this->offset]))
+		// We use the same string as readDigits() purely to save one interned strings
+		return (str_contains('1463720859', $this->bencoded[$this->offset]))
 		     ? new ComplianceError('Illegal character', $this->offset)
 		     : new DecodingException('Illegal character', $this->offset);
 	}
@@ -294,6 +295,7 @@ class Decoder
 		else
 		{
 			// Digits sorted by decreasing frequency as observed on a random sample of torrent files
+			// which speeds it up on PHP < 8.4
 			$spn = strspn($this->bencoded, '1463720859', $this->offset);
 			if ($spn === 0)
 			{
