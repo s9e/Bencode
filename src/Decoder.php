@@ -66,7 +66,7 @@ class Decoder
 	/**
 	* Cast given string as an integer and check for clamping
 	*/
-	protected function castInteger(string $string, int $clamp): int
+	final protected function castInteger(string $string, int $clamp): int
 	{
 		$value = (int) $string;
 		if ($value === $clamp && !is_int(+$string))
