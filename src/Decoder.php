@@ -141,7 +141,7 @@ class Decoder
 	protected function decodeDictionary(): ArrayObject
 	{
 		$values  = [];
-		$lastKey = null;
+		$lastKey = '';
 
 		++$this->offset;
 		while ($this->offset <= $this->max)
@@ -163,10 +163,11 @@ class Decoder
 				'5'     => $this->decodeFastString('5:files',     7, 'files'   ),
 				default => $this->decodeString()
 			};
-			if (isset($lastKey) && strcmp($lastKey, $key) >= 0)
+			if (strcmp($lastKey, $key) >= 0 && !empty($values))
 			{
 				$this->dictionaryComplianceError($key, $lastKey);
 			}
+
 			if ($this->offset <= $this->max)
 			{
 				$values[$key] = $this->decodeAnything();
