@@ -1,4 +1,4 @@
-name: Build
+name: Tests
 
 on:
   push:
@@ -7,9 +7,13 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version:
+          - "8.1"
+          - "8.3"
 
     steps:
     - uses: actions/checkout@v3

@@ -24,7 +24,7 @@
 		}
 	},
 	"scripts": {
-		"fuzz": "fuzzer/fuzz.sh",
+		"fuzz": ["Composer\\Config::disableProcessTimeout", "fuzzer/fuzz.sh"],
 		"test": "vendor/bin/phpunit"
 	}
 }
